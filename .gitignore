@@ -1,0 +1,15 @@
+# datos intermedios del analisis: se regeneran con los scripts de scripts/
+datos/*.csv
+datos/*.json
+!datos/README.md
+
+# literatura: PDFs publicados, indexados en literatura cientifica/00-INDICE.md
+literatura cientifica/*.pdf
+literatura científica/*.pdf
+
+# cache y temporales
+src/crudo.pkl
+src/*.pkl
+__pycache__/
+*.pyc
+.DS_Store

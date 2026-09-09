@@ -1,0 +1,67 @@
+name: Actualiza Ontto
+
+# Cada mañana a las 05:40 UTC = 07:40 en Gipuzkoa (verano).
+# Antes de que nadie salga al monte.
+on:
+  schedule:
+    - cron: '40 5 * * *'
+  workflow_dispatch:          # y a mano desde la pestaña Actions
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  actualiza:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Instala dependencias
+        run: pip install --quiet numpy pandas
+
+      - name: Descarga AEMET y recalcula el disparo
+        env:
+          AEMET_API_KEY: ${{ secrets.AEMET_API_KEY }}
+        run: python src/actualiza.py
+
+      - name: Comprueba que el resultado es usable
+        run: |
+          python - <<'PY'
+          import json, sys, datetime as dt
+          d = json.load(open('publico/datos/disparo.json', encoding='utf-8'))
+          dias = d['live']['d']
+          assert len(dias) > 60, 'serie demasiado corta: %d dias' % len(dias)
+          assert len(d['clim']) == 366, 'falta la climatologia'
+          ult = dt.date.fromisoformat(d['hoy'])
+          atraso = (dt.date.today() - ult).days
+          assert atraso <= 4, 'el ultimo dato observado tiene %d dias' % atraso
+          prev = sum(d['live'].get('o', []))
+          print('OK: %d dias, observado hasta %s, %d previstos' % (len(dias), d['hoy'], prev))
+          PY
+
+      - name: Copia la web
+        run: cp web/index.html publico/index.html
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: publico
+
+  publica:
+    needs: actualiza
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

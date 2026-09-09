@@ -1,0 +1,559 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#16211c">
+<title>Ontto — onddos en Gipuzkoa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+
+<style>
+:root{
+  --ground:#eef2ed; --surface:#ffffff; --surface-2:#f6f9f5;
+  --ink:#16211c; --ink-2:#4a5a52; --ink-3:#7b8b82;
+  --line:#d7dfd8; --line-2:#c2cdc3;
+  --map-bg:#e5ebe4; --map-void:#dce3db; --off:#b3bdb4;
+  --a1:#f0d9a8; --a2:#e0aa55; --a3:#c97a22; --a4:#a2500f; --a5:#6f2f08;
+  --accent:#c97a22; --sel:#111a15; --ok:#2e7a6b;
+  --shadow:0 1px 2px rgba(20,40,30,.06), 0 8px 24px -12px rgba(20,40,30,.18);
+  --r:7px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --ground:#0c1310; --surface:#141d18; --surface-2:#1a241e;
+  --ink:#e7ede8; --ink-2:#a3b1a8; --ink-3:#74837a;
+  --line:#26332c; --line-2:#33423a; --map-bg:#111a16; --map-void:#080e0b; --off:#2b352e;
+  --a1:#4a3d24; --a2:#8a6423; --a3:#c07f2c; --a4:#e2953c; --a5:#f7b45f;
+  --accent:#d98545; --sel:#f3f7f4; --ok:#3f9b89;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.6);
+}}
+:root[data-theme="dark"]{
+  --ground:#0c1310; --surface:#141d18; --surface-2:#1a241e;
+  --ink:#e7ede8; --ink-2:#a3b1a8; --ink-3:#74837a;
+  --line:#26332c; --line-2:#33423a; --map-bg:#111a16; --map-void:#080e0b; --off:#2b352e;
+  --a1:#4a3d24; --a2:#8a6423; --a3:#c07f2c; --a4:#e2953c; --a5:#f7b45f;
+  --accent:#d98545; --sel:#f3f7f4; --ok:#3f9b89;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.6);
+}
+*{box-sizing:border-box}
+body{margin:0; background:var(--ground); color:var(--ink);
+  font-family:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  font-size:14px; line-height:1.5; -webkit-font-smoothing:antialiased}
+
+.app{display:grid; grid-template-columns:392px 1fr; grid-template-rows:auto 1fr;
+     height:100dvh; min-height:600px}
+header{grid-column:1/-1; display:flex; align-items:center; gap:16px; flex-wrap:wrap;
+  padding:11px 22px; background:var(--surface); border-bottom:1px solid var(--line)}
+h1{font-family:"Fraunces",Georgia,serif; font-size:23px; font-weight:600; margin:0;
+   letter-spacing:-.015em}
+.tag{font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--ink-3); border:1px solid var(--line-2); border-radius:99px; padding:2px 9px}
+.srcline{margin-left:auto; color:var(--ink-3); font-size:11.5px; text-align:right; line-height:1.45}
+
+aside{background:var(--surface); border-right:1px solid var(--line); overflow-y:auto;
+      overscroll-behavior:contain}
+main{position:relative; background:var(--map-bg); overflow:hidden}
+canvas#cv{display:block; width:100%; height:100%; cursor:grab; touch-action:none}
+canvas#cv.drag{cursor:grabbing}
+
+.blk{padding:16px 20px; border-bottom:1px solid var(--line)}
+.blk:last-child{border-bottom:0}
+.eyebrow{font-size:10.5px; font-weight:600; letter-spacing:.1em; text-transform:uppercase;
+         color:var(--ink-3); margin:0 0 10px}
+
+/* tira de dias */
+.days{display:flex; gap:6px; overflow-x:auto; padding:2px 0 6px; -webkit-overflow-scrolling:touch}
+.day{flex:0 0 auto; min-width:60px; border:1px solid var(--line-2); background:var(--surface);
+  border-radius:var(--r); padding:7px 6px 8px; cursor:pointer; text-align:center;
+  font:inherit; color:inherit; line-height:1.25}
+.day:hover{background:var(--surface-2)}
+.day:focus-visible{outline:2px solid var(--accent); outline-offset:1px}
+.day .dn{font-size:10.5px; font-weight:600; letter-spacing:.05em; text-transform:uppercase;
+  color:var(--ink-3)}
+.day .dd{font-size:11px; color:var(--ink-3); font-family:"IBM Plex Mono",monospace}
+.day .dv{font-family:"IBM Plex Mono",monospace; font-size:19px; font-weight:600;
+  margin-top:3px; font-variant-numeric:tabular-nums}
+.day .bar{height:3px; border-radius:2px; margin-top:5px; background:var(--line)}
+.day .bar i{display:block; height:100%; border-radius:2px; background:var(--accent)}
+.day[aria-current="true"]{border-color:var(--accent); box-shadow:inset 0 0 0 1px var(--accent)}
+.day.prev{border-style:dashed}
+.day.prev .dn{color:var(--accent)}
+
+/* veredicto */
+.verdict{display:flex; align-items:baseline; gap:10px; margin:0 0 4px}
+.vnum{font-family:"IBM Plex Mono",monospace; font-size:40px; font-weight:600; line-height:1;
+      letter-spacing:-.03em; color:var(--accent); font-variant-numeric:tabular-nums}
+.vmax{font-size:13px; color:var(--ink-3)}
+.vword{font-family:"Fraunces",Georgia,serif; font-size:19px; font-weight:600; margin:0 0 4px}
+.vnote{color:var(--ink-2); font-size:12.5px; margin:0}
+.vnote b{color:var(--ink)}
+
+/* fecha */
+.datebar{display:flex; align-items:center; gap:9px; margin-bottom:10px}
+.datebar .d{font-family:"IBM Plex Mono",monospace; font-size:15px; font-weight:600; flex:1}
+.datebar button{border:1px solid var(--line-2); background:var(--surface); color:var(--ink);
+  border-radius:var(--r); font:inherit; font-size:12px; padding:4px 10px; cursor:pointer}
+.datebar button:hover{background:var(--surface-2)}
+.datebar button:focus-visible{outline:2px solid var(--accent); outline-offset:1px}
+input[type=range]{width:100%; accent-color:var(--accent); margin:0}
+
+/* grafico */
+.chartwrap{position:relative}
+canvas#ch{display:block; width:100%; height:118px}
+.chkey{display:flex; gap:14px; font-size:11px; color:var(--ink-3); margin-top:5px}
+.chkey i{display:inline-block; width:14px; height:2px; vertical-align:middle; margin-right:5px}
+
+/* cotas */
+.bands{display:flex; flex-direction:column; gap:3px}
+.band{display:grid; grid-template-columns:52px 1fr 44px; align-items:center; gap:9px;
+      font-size:12px}
+.band .z{font-family:"IBM Plex Mono",monospace; color:var(--ink-3); text-align:right}
+.band .t{height:9px; border-radius:2px; background:var(--surface-2); overflow:hidden}
+.band .t i{display:block; height:100%; background:var(--accent)}
+.band .v{font-family:"IBM Plex Mono",monospace; color:var(--ink-2);
+         font-variant-numeric:tabular-nums; text-align:right}
+
+/* leyenda */
+.ramp{height:12px; border-radius:3px; margin:2px 0 5px;
+  background:linear-gradient(90deg,var(--off),var(--a1),var(--a2),var(--a3),var(--a4),var(--a5))}
+.ramplab{display:flex; justify-content:space-between; font-size:10.5px; color:var(--ink-3);
+         font-family:"IBM Plex Mono",monospace}
+
+/* ficha */
+.dt-sp{font-family:"Fraunces",Georgia,serif; font-size:18px; font-weight:600; margin:0 0 2px}
+.kv{display:grid; grid-template-columns:1fr auto; gap:5px 14px; font-size:12.5px; margin-top:10px}
+.kv dt{color:var(--ink-3)}
+.kv dd{margin:0; text-align:right; font-family:"IBM Plex Mono",monospace;
+       font-variant-numeric:tabular-nums}
+.empty{color:var(--ink-3); font-size:12.5px; margin:0}
+.warn{font-size:11.5px; color:var(--ink-2); margin:0; padding:9px 11px;
+      background:var(--surface-2); border-left:2px solid var(--line-2); border-radius:0 4px 4px 0}
+.warn + .warn{margin-top:7px}
+
+.ctr{position:absolute; right:13px; bottom:13px; display:flex; flex-direction:column; gap:6px}
+.ctr button{width:32px; height:32px; border:1px solid var(--line-2); background:var(--surface);
+  color:var(--ink); border-radius:var(--r); font-size:16px; cursor:pointer; box-shadow:var(--shadow);
+  display:grid; place-items:center; font-family:inherit; line-height:1; padding:0}
+.ctr button:hover{background:var(--surface-2)}
+.scale{position:absolute; left:13px; bottom:13px; font-size:10.5px; color:var(--ink-2);
+  background:color-mix(in srgb,var(--surface) 84%,transparent); padding:4px 7px;
+  border-radius:5px; border:1px solid var(--line); backdrop-filter:blur(4px)}
+.scale .rule{height:4px; border:1px solid var(--ink-2); border-top:0; margin-bottom:3px}
+#tip{position:absolute; pointer-events:none; background:var(--sel); color:var(--ground);
+  padding:5px 9px; border-radius:5px; font-size:11.5px; white-space:nowrap;
+  opacity:0; transition:opacity .1s; z-index:5; font-weight:500}
+.offbanner{position:absolute; left:50%; top:16px; transform:translateX(-50%);
+  background:var(--sel); color:var(--ground); font-size:12.5px; font-weight:600;
+  padding:7px 16px; border-radius:99px; box-shadow:var(--shadow); z-index:4}
+
+@media (max-width:920px){
+  .app{grid-template-columns:1fr; grid-template-rows:auto 52vh auto; height:auto}
+  aside{border-right:0; border-top:1px solid var(--line); order:3; overflow:visible}
+  main{order:2}
+  .srcline{margin-left:0; text-align:left; width:100%}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+</head>
+<body>
+<div class="app">
+  <header>
+    <h1>Ontto</h1>
+    <span class="tag">prototipo</span>
+    <p class="srcline">POTENCIAL × DISPARO · Gipuzkoa<br><span id="upd">Datos de AEMET</span></p>
+  </header>
+
+  <aside>
+    <div class="blk">
+      <p class="eyebrow">Hoy y los próximos días</p>
+      <div class="days" id="days"></div>
+      <p class="vnote" id="dnote" style="margin-top:4px;font-size:11.5px">&nbsp;</p>
+    </div>
+
+    <div class="blk">
+      <p class="eyebrow">Condiciones para onddo</p>
+      <p class="verdict"><span class="vnum" id="vnum">—</span><span class="vmax">/ 100</span></p>
+      <p class="vword" id="vword">&nbsp;</p>
+      <p class="vnote" id="vnote">&nbsp;</p>
+    </div>
+
+    <div class="blk">
+      <p class="eyebrow">El año, cota a cota</p>
+      <div class="chartwrap"><canvas id="ch"></canvas></div>
+      <div class="chkey">
+        <span><i style="background:var(--accent)"></i>este año</span>
+        <span><i style="background:var(--ink-3);opacity:.55"></i>media 1970–2015</span>
+      </div>
+    </div>
+
+    <div class="blk">
+      <p class="eyebrow">Índice de disparo por altitud</p>
+      <div class="bands" id="bands"></div>
+    </div>
+
+    <div class="blk">
+      <p class="eyebrow">Escala del mapa</p>
+      <div class="ramp"></div>
+      <div class="ramplab"><span>apagado</span><span>medio</span><span>máximo</span></div>
+      <p class="vnote" style="margin-top:9px">Índice relativo = producción esperada del rodal
+        × favorabilidad del día. <b>No son kilos</b>: es una escala comparativa.</p>
+    </div>
+
+    <div class="blk" id="detail">
+      <p class="eyebrow">Rodal seleccionado</p>
+      <p class="empty" id="dempty">Pulsa una mancha del mapa.</p>
+      <div id="dbody" hidden></div>
+    </div>
+
+    <div class="blk">
+      <p class="eyebrow">Qué no es esto</p>
+      <p class="warn"><b>No dice que haya setas.</b> Dice que las condiciones se parecen a las
+        que la literatura asocia con fructificación, en montes que deberían producir.</p>
+      <p class="warn"><b>No está validado.</b> No hay datos de producción medidos en Gipuzkoa
+        con los que comprobar si acierta.</p>
+      <p class="warn"><b>Faltan 72.000 ha.</b> Las plantaciones de conífera no tienen
+        coeficiente medido y quedan fuera del mapa, no en cero.</p>
+    </div>
+  </aside>
+
+  <main>
+    <canvas id="cv"></canvas>
+    <div class="offbanner" id="off" hidden>Hoy el mapa está apagado</div>
+    <div id="tip"></div>
+    <div class="scale"><div class="rule" id="scrule"></div><span id="sctxt"></span></div>
+    <div class="ctr">
+      <button id="zin" type="button" aria-label="Acercar">+</button>
+      <button id="zout" type="button" aria-label="Alejar">−</button>
+      <button id="zrst" type="button" aria-label="Ver todo" style="font-size:11px;font-weight:600">◻</button>
+    </div>
+  </main>
+</div>
+
+<script>
+(async function(){
+"use strict";
+let D;
+try{
+  const [base,dis]=await Promise.all([
+    fetch('datos/base.json',{cache:'force-cache'}).then(r=>r.json()),
+    fetch('datos/disparo.json',{cache:'no-cache'}).then(r=>r.json())
+  ]);
+  D=base; D.disparo=dis;
+}catch(e){
+  document.body.innerHTML='<div style="padding:40px;font-family:system-ui;max-width:34em;'
+    +'margin:0 auto;line-height:1.6"><h1 style="font-size:20px">No se pudieron cargar los datos</h1>'
+    +'<p>Comprueba la conexión y vuelve a intentarlo.</p></div>';
+  return;
+}
+const [MINX,MINY,MAXX,MAXY]=D.bbox, W=MAXX-MINX, H=MAXY-MINY;
+const F=D.f;                       // [rings, coef, alt, sp, ha, sustrato, fcc, emasa]
+const DIS=D.disparo, ZS=DIS.zs;
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+
+for(const f of F){
+  let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;
+  for(const r of f[0]) for(let i=0;i<r.length;i+=2){
+    const x=r[i],y=r[i+1];
+    if(x<x0)x0=x; if(x>x1)x1=x; if(y<y0)y0=y; if(y>y1)y1=y;
+  }
+  f[8]=[x0,y0,x1,y1];
+}
+const MAXPOT=Math.max(...F.map(f=>f[1]));
+// interpolación del disparo a la altitud del rodal
+function disAt(vals, alt){
+  if(alt<=ZS[0]) return vals[0];
+  if(alt>=ZS[ZS.length-1]) return vals[ZS.length-1];
+  for(let i=1;i<ZS.length;i++){
+    if(alt<=ZS[i]){
+      const t=(alt-ZS[i-1])/(ZS[i]-ZS[i-1]);
+      return vals[i-1]*(1-t)+vals[i]*t;
+    }
+  }
+  return vals[0];
+}
+// HOY = ultimo dia observado; detras vienen los previstos por AEMET
+const HOY=(()=>{
+  if(DIS.live.o){ for(let k=DIS.live.o.length-1;k>=0;k--) if(DIS.live.o[k]===0) return k; }
+  return DIS.live.d.length-1;
+})();
+let di=HOY;
+let vals=DIS.live.v[di];
+
+const cv=document.getElementById('cv'), ctx=cv.getContext('2d');
+let cw=0,ch=0,dpr=1,scale=1,fit=1,ox=0,oy=0,sel=-1,hov=-1;
+function resize(){
+  dpr=Math.min(window.devicePixelRatio||1,2);
+  const r=cv.getBoundingClientRect();
+  cw=Math.max(1,Math.round(r.width)); ch=Math.max(1,Math.round(r.height));
+  cv.width=cw*dpr; cv.height=ch*dpr; ctx.setTransform(dpr,0,0,dpr,0,0);
+  fit=Math.min(cw/W,ch/H)*0.97;
+  if(!isFinite(scale)||scale<=0) reset(); else draw();
+  drawChart();
+}
+function reset(){ scale=fit; ox=(cw-W*scale)/2; oy=(ch-H*scale)/2; draw(); }
+const sx=x=>x*scale+ox;
+const sy=y=>(ch-oy)-y*scale;
+function path(rings){
+  ctx.beginPath();
+  for(const r of rings){
+    ctx.moveTo(sx(r[0]),sy(r[1]));
+    for(let i=2;i<r.length;i+=2) ctx.lineTo(sx(r[i]),sy(r[i+1]));
+    ctx.closePath();
+  }
+}
+const RAMP=['--a1','--a2','--a3','--a4','--a5'];
+function colorFor(v){          // v normalizado 0..1
+  if(v<=0.002) return css('--off');
+  const i=Math.min(RAMP.length-1, Math.floor(v*RAMP.length));
+  return css(RAMP[i]);
+}
+let raf=0; function draw(){ if(!raf) raf=requestAnimationFrame(render); }
+function render(){
+  raf=0;
+  ctx.clearRect(0,0,cw,ch);
+  ctx.fillStyle=css('--map-void'); ctx.fillRect(0,0,cw,ch);
+  ctx.fillStyle=css('--map-bg'); path(D.gip); ctx.fill();
+  const NORM=MAXPOT*0.55;
+  const items=F.map((f,i)=>[i, f[1]*disAt(vals,f[2])]).sort((a,b)=>a[1]-b[1]);
+  for(const [i,val] of items){
+    const f=F[i], b=f[8];
+    const px0=sx(b[0]),px1=sx(b[2]),py1=sy(b[1]),py0=sy(b[3]);
+    if(px1<-2||px0>cw+2||py1<-2||py0>ch+2) continue;
+    if(px1-px0<1.1&&py1-py0<1.1) continue;
+    ctx.fillStyle=colorFor(val/NORM); path(f[0]); ctx.fill();
+  }
+  ctx.strokeStyle=css('--ink-3'); ctx.globalAlpha=.35; ctx.lineWidth=scale>fit*3?.8:.45;
+  for(const m of D.muni){ path(m.r); ctx.stroke(); }
+  ctx.globalAlpha=1;
+  ctx.strokeStyle=css('--ink-3'); ctx.lineWidth=1.1; path(D.gip); ctx.stroke();
+  const h=(sel>=0)?sel:hov;
+  if(h>=0){ ctx.strokeStyle=css('--sel'); ctx.lineWidth=(h===sel)?2:1.4; path(F[h][0]); ctx.stroke(); }
+  if(scale>fit*2.1){
+    ctx.font='500 11px "IBM Plex Sans", sans-serif';
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    const placed=[], ms=D.muni.slice().sort((a,b)=>b.a-a.a);
+    for(const m of ms){
+      const x=sx(m.c[0]), y=sy(m.c[1]);
+      if(x<40||x>cw-40||y<14||y>ch-14) continue;
+      if(placed.some(p=>Math.abs(p[0]-x)<62&&Math.abs(p[1]-y)<15)) continue;
+      placed.push([x,y]);
+      ctx.lineWidth=3; ctx.strokeStyle=css('--map-bg'); ctx.strokeText(m.n,x,y);
+      ctx.fillStyle=css('--ink-2'); ctx.fillText(m.n,x,y);
+    }
+  }
+  scalebar();
+}
+function scalebar(){
+  const t=[100,200,500,1000,2000,5000,10000,20000]; let m=t[0];
+  for(const v of t){ if(v*scale<=110) m=v; }
+  document.getElementById('scrule').style.width=(m*scale)+'px';
+  document.getElementById('sctxt').textContent=m>=1000?(m/1000)+' km':m+' m';
+}
+function inRing(r,x,y){
+  let hit=false;
+  for(let i=0,j=r.length-2;i<r.length;j=i,i+=2){
+    const xi=r[i],yi=r[i+1],xj=r[j],yj=r[j+1];
+    if(((yi>y)!==(yj>y))&&(x<(xj-xi)*(y-yi)/(yj-yi)+xi)) hit=!hit;
+  }
+  return hit;
+}
+function pick(px,py){
+  const x=(px-ox)/scale, y=((ch-oy)-py)/scale;
+  for(let i=F.length-1;i>=0;i--){
+    const b=F[i][8];
+    if(x<b[0]||x>b[2]||y<b[1]||y>b[3]) continue;
+    for(const r of F[i][0]) if(inRing(r,x,y)) return i;
+  }
+  return -1;
+}
+let drag=false,moved=false,lx=0,ly=0;
+cv.addEventListener('pointerdown',e=>{drag=true;moved=false;lx=e.clientX;ly=e.clientY;
+  cv.classList.add('drag'); cv.setPointerCapture(e.pointerId);});
+cv.addEventListener('pointermove',e=>{
+  const r=cv.getBoundingClientRect(), px=e.clientX-r.left, py=e.clientY-r.top;
+  if(drag){
+    const ddx=e.clientX-lx, ddy=e.clientY-ly;
+    if(Math.abs(ddx)+Math.abs(ddy)>3) moved=true;
+    ox+=ddx; oy-=ddy; lx=e.clientX; ly=e.clientY; draw(); tipHide(); return; }
+  const h=pick(px,py);
+  if(h!==hov){ hov=h; draw(); }
+  if(h>=0) tipShow(px,py,h); else tipHide();
+});
+cv.addEventListener('pointerup',e=>{
+  drag=false; cv.classList.remove('drag');
+  if(moved) return;
+  const r=cv.getBoundingClientRect();
+  sel=pick(e.clientX-r.left,e.clientY-r.top); showDetail(sel); draw();
+});
+cv.addEventListener('pointerleave',()=>{hov=-1;tipHide();draw();});
+cv.addEventListener('wheel',e=>{
+  e.preventDefault();
+  const r=cv.getBoundingClientRect();
+  zoomAt(e.clientX-r.left,e.clientY-r.top,Math.exp(-e.deltaY*0.0016));
+},{passive:false});
+function zoomAt(px,py,k){
+  const ns=Math.max(fit*0.85,Math.min(fit*90,scale*k));
+  const wx=(px-ox)/scale, wy=((ch-oy)-py)/scale;
+  scale=ns; ox=px-wx*scale; oy=(ch-py)-wy*scale; draw();
+}
+document.getElementById('zin').onclick=()=>zoomAt(cw/2,ch/2,1.5);
+document.getElementById('zout').onclick=()=>zoomAt(cw/2,ch/2,1/1.5);
+document.getElementById('zrst').onclick=()=>reset();
+
+const tip=document.getElementById('tip');
+function tipShow(px,py,i){
+  const f=F[i], d=disAt(vals,f[2]);
+  tip.textContent=f[3]+' · '+(d<=0.002?'apagado':(f[1]*d).toFixed(2));
+  tip.style.opacity=1;
+  const r=cv.getBoundingClientRect();
+  let l=px+14,t=py+14;
+  if(l+tip.offsetWidth>r.width-8) l=px-tip.offsetWidth-12;
+  if(t+tip.offsetHeight>r.height-8) t=py-tip.offsetHeight-12;
+  tip.style.left=l+'px'; tip.style.top=t+'px';
+}
+function tipHide(){ tip.style.opacity=0; }
+
+/* ---------- gráfico anual ---------- */
+const chc=document.getElementById('ch'), cx2=chc.getContext('2d');
+function drawChart(){
+  const r=chc.getBoundingClientRect();
+  const w=Math.max(1,Math.round(r.width)), h=118;
+  chc.width=w*dpr; chc.height=h*dpr; cx2.setTransform(dpr,0,0,dpr,0,0);
+  cx2.clearRect(0,0,w,h);
+  const zi=3;                       // banda de 600 m
+  const PAD=4, HH=h-18;
+  const maxv=0.9;
+  // eje de meses
+  cx2.font='9px "IBM Plex Sans", sans-serif'; cx2.textAlign='center';
+  cx2.fillStyle=css('--ink-3'); cx2.strokeStyle=css('--line');
+  const MES=['E','F','M','A','M','J','J','A','S','O','N','D'];
+  for(let m=0;m<12;m++){
+    const x=PAD+(m+0.5)/12*(w-2*PAD);
+    cx2.fillText(MES[m],x,h-4);
+  }
+  cx2.beginPath(); cx2.moveTo(PAD,HH); cx2.lineTo(w-PAD,HH); cx2.stroke();
+  // climatología
+  cx2.strokeStyle=css('--ink-3'); cx2.globalAlpha=.55; cx2.lineWidth=1.4;
+  cx2.beginPath();
+  for(let d=0;d<366;d++){
+    const x=PAD+d/365*(w-2*PAD), y=HH-Math.min(DIS.clim[d][zi]/maxv,1)*(HH-PAD);
+    d?cx2.lineTo(x,y):cx2.moveTo(x,y);
+  }
+  cx2.stroke(); cx2.globalAlpha=1;
+  // serie viva del año mostrado
+  const year=DIS.live.d[di].slice(0,4);
+  cx2.strokeStyle=css('--accent'); cx2.lineWidth=1.8; cx2.beginPath();
+  let started=false;
+  for(let k=0;k<DIS.live.d.length;k++){
+    if(DIS.live.d[k].slice(0,4)!==year) continue;
+    const doy=Math.round((Date.parse(DIS.live.d[k])-Date.parse(year+'-01-01'))/864e5);
+    const x=PAD+doy/365*(w-2*PAD), y=HH-Math.min(DIS.live.v[k][zi]/maxv,1)*(HH-PAD);
+    started?cx2.lineTo(x,y):cx2.moveTo(x,y); started=true;
+  }
+  cx2.stroke();
+  // marcador de la fecha seleccionada
+  const doy=Math.round((Date.parse(DIS.live.d[di])-Date.parse(year+'-01-01'))/864e5);
+  const x=PAD+doy/365*(w-2*PAD);
+  cx2.strokeStyle=css('--sel'); cx2.lineWidth=1; cx2.setLineDash([2,2]);
+  cx2.beginPath(); cx2.moveTo(x,PAD); cx2.lineTo(x,HH); cx2.stroke(); cx2.setLineDash([]);
+}
+
+/* ---------- panel ---------- */
+const MESES=['enero','febrero','marzo','abril','mayo','junio','julio','agosto',
+             'septiembre','octubre','noviembre','diciembre'];
+function fmtFecha(s){
+  const [y,m,d]=s.split('-').map(Number);
+  return d+' de '+MESES[m-1]+' de '+y;
+}
+function palabra(v){
+  if(v<0.02) return ['Apagado','Las condiciones excluyen la fructificación.'];
+  if(v<0.15) return ['Muy bajo','Lejos de las condiciones favorables.'];
+  if(v<0.35) return ['Bajo','Algo se mueve en las cotas altas.'];
+  if(v<0.55) return ['Moderado','Condiciones razonables en parte del territorio.'];
+  if(v<0.75) return ['Bueno','Buen momento en la franja adecuada.'];
+  return ['Muy bueno','Condiciones de las mejores del año.'];
+}
+function update(){
+  vals=DIS.live.v[di];
+  const f=DIS.live.d[di];
+  const esPrev = DIS.live.o && DIS.live.o[di]===1;
+  document.getElementById('dnote').innerHTML = esPrev
+    ? '<b>'+fmtFecha(f)+'</b> \u00b7 predicci\u00f3n de AEMET, no observaci\u00f3n.'
+    : '<b>'+fmtFecha(f)+'</b> \u00b7 datos observados.';
+  pintaDias();
+  const mx=Math.max(...vals);
+  const [pal,nota]=palabra(mx);
+  document.getElementById('vnum').textContent=Math.round(mx*100);
+  document.getElementById('vword').textContent=pal;
+  // comparación con la climatología
+  const y=f.slice(0,4);
+  const doy=Math.max(0,Math.min(365,Math.round((Date.parse(f)-Date.parse(y+'-01-01'))/864e5)));
+  const cl=Math.max(...DIS.clim[doy]);
+  let cmp='';
+  if(cl>0.02){
+    const pct=Math.round(100*(mx-cl)/cl);
+    cmp=' Frente a la media de esta fecha, <b>'+(pct>=0?'+':'')+pct+'&nbsp;%</b>.';
+  }
+  document.getElementById('vnote').innerHTML=nota+cmp;
+  document.getElementById('off').hidden = mx>=0.02 ? true : false;
+  // bandas
+  document.getElementById('bands').innerHTML=ZS.map((z,i)=>
+    '<div class="band"><span class="z">'+z+' m</span>'+
+    '<span class="t"><i style="width:'+Math.round(Math.min(vals[i]/0.9,1)*100)+'%"></i></span>'+
+    '<span class="v">'+vals[i].toFixed(2).replace('.',',')+'</span></div>').join('');
+  if(sel>=0) showDetail(sel);
+  drawChart(); draw();
+}
+function showDetail(i){
+  const em=document.getElementById('dempty'), bd=document.getElementById('dbody');
+  if(i<0){ em.hidden=false; bd.hidden=true; return; }
+  const f=F[i], d=disAt(vals,f[2]);
+  em.hidden=true; bd.hidden=false;
+  const rows=[['Sustrato',f[5]?f[5].charAt(0).toUpperCase()+f[5].slice(1):'—'],
+    ['Cabida cubierta',(f[6]!=null?f[6]+' %':'—')],
+    ['Estado de masa',f[7]||'—'],
+    ['Altitud',f[2]+' m'],
+    ['Superficie',f[4].toLocaleString('es-ES')+' ha'],
+    ['Potencial',f[1].toFixed(2).replace('.',',')+' kg/ha·año'],
+    ['Disparo hoy',d.toFixed(3).replace('.',',')],
+    ['Índice combinado',(f[1]*d).toFixed(2).replace('.',',')]];
+  bd.innerHTML='<p class="dt-sp">'+f[3]+'</p><dl class="kv">'+
+    rows.map(r=>'<dt>'+r[0]+'</dt><dd>'+r[1]+'</dd>').join('')+'</dl>';
+}
+const DIAS=['dom','lun','mar','mi\u00e9','jue','vie','s\u00e1b'];
+function pintaDias(){
+  const desde=Math.max(0,HOY-4), hasta=DIS.live.d.length-1;
+  let html='';
+  for(let k=desde;k<=hasta;k++){
+    const f=DIS.live.d[k], v=Math.max(...DIS.live.v[k]);
+    const prev=DIS.live.o && DIS.live.o[k]===1;
+    const dt=new Date(f+'T12:00:00');
+    const nom = k===HOY ? 'Hoy' : (k===HOY+1 ? 'Ma\u00f1ana' : DIAS[dt.getDay()]);
+    html+='<button type="button" class="day'+(prev?' prev':'')+'" data-k="'+k+'"'+
+      (k===di?' aria-current="true"':'')+'>'+
+      '<span class="dn">'+nom+'</span>'+
+      '<span class="dd">'+dt.getDate()+'/'+(dt.getMonth()+1)+'</span>'+
+      '<span class="dv">'+Math.round(v*100)+'</span>'+
+      '<span class="bar"><i style="width:'+Math.round(Math.min(v/0.9,1)*100)+'%"></i></span>'+
+      '</button>';
+  }
+  const cont=document.getElementById('days');
+  cont.innerHTML=html;
+  cont.querySelectorAll('.day').forEach(b=>{
+    b.onclick=()=>{ di=+b.dataset.k; update(); };
+  });
+  const act=cont.querySelector('[aria-current="true"]');
+  if(act && act.scrollIntoView) try{ act.scrollIntoView({block:'nearest',inline:'center'}); }catch(e){}
+}
+
+window.addEventListener('resize',resize);
+matchMedia('(prefers-color-scheme:dark)').addEventListener('change',()=>{draw();drawChart();});
+const up=document.getElementById('upd');
+if(up && DIS.actualizado) up.textContent='Actualizado '+DIS.actualizado;
+resize(); reset(); update();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,491 @@
+<title>Hábitat de onddo en Gipuzkoa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+
+<style>
+:root{
+  --ground:#eef2ed; --surface:#ffffff; --surface-2:#f6f9f5;
+  --ink:#16211c; --ink-2:#4a5a52; --ink-3:#7b8b82;
+  --line:#d7dfd8; --line-2:#c2cdc3;
+  --map-bg:#e4ebe3; --map-void:#dbe3da;
+  --h0:#c0721c; --h1:#2e7a6b; --h2:#8d968f; --h3:#9c8a6e;
+  --h0-soft:#e8b478; --h1-soft:#7fb3a8; --h2-soft:#b7bfb9; --h3-soft:#c4b799;
+  --muni:#9aa79e; --sel:#111a15;
+  --shadow:0 1px 2px rgba(20,40,30,.06), 0 8px 24px -12px rgba(20,40,30,.18);
+  --r:7px;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#0c1310; --surface:#141d18; --surface-2:#1a241e;
+    --ink:#e7ede8; --ink-2:#a3b1a8; --ink-3:#74837a;
+    --line:#26332c; --line-2:#33423a;
+    --map-bg:#101915; --map-void:#0a110d;
+    --h0:#e08a2c; --h1:#3f9b89; --h2:#7c877f; --h3:#a8946f;
+    --h0-soft:#7a4a15; --h1-soft:#1e5348; --h2-soft:#3d4741; --h3-soft:#544a34;
+    --muni:#3d4c43; --sel:#f3f7f4;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.6);
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0c1310; --surface:#141d18; --surface-2:#1a241e;
+  --ink:#e7ede8; --ink-2:#a3b1a8; --ink-3:#74837a;
+  --line:#26332c; --line-2:#33423a;
+  --map-bg:#101915; --map-void:#0a110d;
+  --h0:#e08a2c; --h1:#3f9b89; --h2:#7c877f; --h3:#a8946f;
+  --h0-soft:#7a4a15; --h1-soft:#1e5348; --h2-soft:#3d4741; --h3-soft:#544a34;
+  --muni:#3d4c43; --sel:#f3f7f4;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.6);
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--ground); color:var(--ink);
+  font-family:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  font-size:14px; line-height:1.5; -webkit-font-smoothing:antialiased;
+}
+.mono{font-family:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;font-variant-numeric:tabular-nums}
+
+/* ---------- shell ---------- */
+.app{display:grid; grid-template-columns:376px 1fr; grid-template-rows:auto 1fr;
+     height:100dvh; min-height:520px}
+header{grid-column:1/-1; display:flex; align-items:baseline; gap:18px; flex-wrap:wrap;
+  padding:14px 22px; background:var(--surface); border-bottom:1px solid var(--line)}
+h1{font-family:"Fraunces",Georgia,serif; font-optical-sizing:auto;
+   font-size:21px; font-weight:600; margin:0; letter-spacing:-.01em; text-wrap:balance}
+.sub{color:var(--ink-3); font-size:12.5px; margin:0}
+.srcline{margin-left:auto; color:var(--ink-3); font-size:11.5px; text-align:right; line-height:1.45}
+
+aside{background:var(--surface); border-right:1px solid var(--line);
+      overflow-y:auto; overscroll-behavior:contain; display:flex; flex-direction:column}
+main{position:relative; background:var(--map-bg); overflow:hidden}
+canvas{display:block; width:100%; height:100%; cursor:grab; touch-action:none}
+canvas.drag{cursor:grabbing}
+
+/* ---------- panel ---------- */
+.blk{padding:18px 20px; border-bottom:1px solid var(--line)}
+.blk:last-child{border-bottom:0}
+.eyebrow{font-size:10.5px; font-weight:600; letter-spacing:.1em; text-transform:uppercase;
+         color:var(--ink-3); margin:0 0 10px}
+
+.headline{display:flex; align-items:flex-end; gap:9px; margin:0 0 3px}
+.big{font-family:"IBM Plex Mono",monospace; font-size:33px; font-weight:600;
+     line-height:1; letter-spacing:-.02em; color:var(--h0); font-variant-numeric:tabular-nums}
+.big-u{font-size:14px; color:var(--ink-2); padding-bottom:3px}
+.headline-note{color:var(--ink-2); font-size:12.5px; margin:0}
+
+.bar{display:flex; height:11px; border-radius:3px; overflow:hidden; margin:15px 0 9px;
+     background:var(--line); gap:1.5px}
+.bar span{display:block}
+.barkey{display:flex; justify-content:space-between; font-size:11px; color:var(--ink-3)}
+
+/* legend */
+.leg{display:flex; flex-direction:column; gap:3px}
+.legrow{display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:10px;
+  padding:8px 9px; border:1px solid transparent; border-radius:var(--r);
+  background:none; width:100%; text-align:left; font:inherit; color:inherit; cursor:pointer}
+.legrow:hover{background:var(--surface-2); border-color:var(--line)}
+.legrow:focus-visible{outline:2px solid var(--h0); outline-offset:1px}
+.legrow[aria-pressed="false"]{opacity:.42}
+.sw{width:13px; height:13px; border-radius:3px; flex:none}
+.legname{font-weight:500; font-size:13px}
+.legsub{color:var(--ink-3); font-size:11px; display:block; font-weight:400}
+.legval{font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--ink-2);
+        text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap}
+
+/* species table */
+.sp{width:100%; border-collapse:collapse; font-size:12.5px}
+.sp td{padding:4px 0; vertical-align:baseline}
+.sp td:first-child{padding-right:10px}
+.sp td:last-child{text-align:right; font-family:"IBM Plex Mono",monospace; color:var(--ink-2);
+                  font-variant-numeric:tabular-nums; white-space:nowrap}
+.spdot{display:inline-block; width:7px; height:7px; border-radius:2px; margin-right:7px;
+       vertical-align:baseline; flex:none}
+.morebtn{margin-top:9px; background:none; border:0; padding:0; font:inherit; font-size:12px;
+         color:var(--h0); cursor:pointer; text-decoration:underline; text-underline-offset:2px}
+.morebtn:focus-visible{outline:2px solid var(--h0); outline-offset:2px; border-radius:2px}
+
+/* detail card */
+#detail .dt-sp{font-family:"Fraunces",Georgia,serif; font-size:19px; font-weight:600;
+               margin:0 0 2px; line-height:1.2; text-wrap:balance}
+#detail .dt-t{color:var(--ink-3); font-size:12px; margin:0 0 14px}
+.kv{display:grid; grid-template-columns:1fr auto; gap:6px 14px; font-size:12.5px}
+.kv dt{color:var(--ink-3)}
+.kv dd{margin:0; text-align:right; font-family:"IBM Plex Mono",monospace;
+       font-variant-numeric:tabular-nums}
+.pill{display:inline-block; padding:2px 8px; border-radius:99px; font-size:10.5px;
+      font-weight:600; letter-spacing:.03em; margin-bottom:9px}
+.empty{color:var(--ink-3); font-size:12.5px; margin:0}
+
+/* map controls */
+.ctr{position:absolute; right:14px; bottom:14px; display:flex; flex-direction:column; gap:6px}
+.ctr button{width:32px; height:32px; border:1px solid var(--line-2); background:var(--surface);
+  color:var(--ink); border-radius:var(--r); font-size:16px; cursor:pointer; box-shadow:var(--shadow);
+  display:grid; place-items:center; font-family:inherit; line-height:1; padding:0}
+.ctr button:hover{background:var(--surface-2)}
+.ctr button:focus-visible{outline:2px solid var(--h0); outline-offset:1px}
+.ctr .rst{font-size:11px; font-weight:600}
+.scale{position:absolute; left:14px; bottom:14px; font-size:10.5px; color:var(--ink-2);
+  background:color-mix(in srgb, var(--surface) 82%, transparent); padding:4px 7px;
+  border-radius:5px; border:1px solid var(--line); backdrop-filter:blur(4px)}
+.scale .rule{height:4px; border:1px solid var(--ink-2); border-top:0; margin-bottom:3px}
+#tip{position:absolute; pointer-events:none; background:var(--sel);
+  color:var(--surface); padding:5px 9px; border-radius:5px; font-size:11.5px;
+  white-space:nowrap; opacity:0; transition:opacity .1s; z-index:5; font-weight:500}
+#tip{color:var(--ground)}
+.hintbar{position:absolute; left:50%; top:14px; transform:translateX(-50%);
+  background:color-mix(in srgb, var(--surface) 88%, transparent); border:1px solid var(--line);
+  color:var(--ink-2); font-size:11.5px; padding:5px 12px; border-radius:99px;
+  backdrop-filter:blur(6px); box-shadow:var(--shadow)}
+
+@media (max-width:860px){
+  .app{grid-template-columns:1fr; grid-template-rows:auto 58vh auto; height:auto}
+  aside{border-right:0; border-top:1px solid var(--line); order:3; overflow:visible}
+  main{order:2}
+  .srcline{margin-left:0; text-align:left; width:100%}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important; animation:none!important}}
+</style>
+
+<div class="app">
+  <header>
+    <div>
+      <h1>Hábitat de onddo en Gipuzkoa</h1>
+      <p class="sub">Masas forestales clasificadas por su valor como hospedante del grupo <i>Boletus edulis</i></p>
+    </div>
+    <p class="srcline">Mapa Forestal de la CAE 2024 · 1:10.000<br>Eusko Jaurlaritza / Gobierno Vasco · CC&nbsp;BY</p>
+  </header>
+
+  <aside>
+    <div class="blk">
+      <p class="eyebrow">Hábitat principal</p>
+      <p class="headline"><span class="big" id="kpi">—</span><span class="big-u">ha</span></p>
+      <p class="headline-note" id="kpinote">&nbsp;</p>
+      <div class="bar" id="bar"></div>
+      <div class="barkey"><span>Reparto del arbolado</span><span class="mono" id="bartot"></span></div>
+    </div>
+
+    <div class="blk">
+      <p class="eyebrow">Clases · pulsa para filtrar</p>
+      <div class="leg" id="leg"></div>
+    </div>
+
+    <div class="blk" id="spblk">
+      <p class="eyebrow">Especie principal</p>
+      <table class="sp"><tbody id="sptb"></tbody></table>
+      <button class="morebtn" id="more" type="button">Ver todas las especies</button>
+    </div>
+
+    <div class="blk" id="detail">
+      <p class="eyebrow">Masa seleccionada</p>
+      <p class="empty" id="dempty">Pulsa cualquier mancha del mapa para ver su ficha: especies, ocupación, estado de masa y cabida cubierta.</p>
+      <div id="dbody" hidden></div>
+    </div>
+  </aside>
+
+  <main>
+    <canvas id="cv"></canvas>
+    <div class="hintbar" id="hint">Arrastra para mover · rueda para acercar</div>
+    <div id="tip"></div>
+    <div class="scale"><div class="rule" id="scrule"></div><span id="sctxt"></span></div>
+    <div class="ctr">
+      <button id="zin" type="button" aria-label="Acercar">+</button>
+      <button id="zout" type="button" aria-label="Alejar">−</button>
+      <button id="zrst" class="rst" type="button" aria-label="Ver todo">◻</button>
+    </div>
+  </main>
+</div>
+
+<script type="application/json" id="payload">__DATA__</script>
+<script>
+(function(){
+"use strict";
+const D = JSON.parse(document.getElementById('payload').textContent);
+const [MINX,MINY,MAXX,MAXY] = D.bbox;
+const W = MAXX-MINX, H = MAXY-MINY;
+
+const GRUPOS = [
+  {k:0, n:'Frondosa autóctona', s:'Haya, robles, mixto atlántico, castaño', v:'--h0', sv:'--h0-soft'},
+  {k:1, n:'Conífera ectomicorrícica', s:'Pinos, alerce, Douglas — hospedante posible', v:'--h1', sv:'--h1-soft'},
+  {k:2, n:'Sin simbiosis', s:'Criptomeria, secuoya, eucalipto, ripícolas', v:'--h2', sv:'--h2-soft'},
+  {k:3, n:'Otras masas', s:'Mezclas y frondosas menores', v:'--h3', sv:'--h3-soft'}
+];
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const on = [true,true,true,true];
+const GIP_HA = 197839;
+
+// ---- precompute feature bboxes ----
+const F = D.f;
+for (const f of F){
+  let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;
+  for (const r of f[1]) for (let i=0;i<r.length;i+=2){
+    const x=r[i], y=r[i+1];
+    if(x<x0)x0=x; if(x>x1)x1=x; if(y<y0)y0=y; if(y>y1)y1=y;
+  }
+  f[10]=[x0,y0,x1,y1];
+}
+// paint order: muted classes first, prime habitat last so it stays legible
+const ORDER = F.map((_,i)=>i).sort((a,b)=>{
+  const p=[3,2,1,0];  // draw index by group priority
+  return p.indexOf(F[a][0]) - p.indexOf(F[b][0]);
+});
+
+// ---------- canvas ----------
+const cv = document.getElementById('cv'), ctx = cv.getContext('2d');
+let dpr=1, cw=0, ch=0;
+let scale=1, ox=0, oy=0, fit=1;   // world→screen
+let sel=-1, hov=-1;
+
+function resize(){
+  dpr = Math.min(window.devicePixelRatio||1, 2);
+  const r = cv.getBoundingClientRect();
+  cw = Math.max(1, Math.round(r.width)); ch = Math.max(1, Math.round(r.height));
+  cv.width = cw*dpr; cv.height = ch*dpr;
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  fit = Math.min(cw/W, ch/H)*0.97;
+  if (scale<=0 || !isFinite(scale)) reset(); else draw();
+}
+function reset(){
+  scale = fit;
+  ox = (cw - W*scale)/2; oy = (ch - H*scale)/2;
+  draw();
+}
+const sx = x => x*scale + ox;
+function toScreenY(y){ return (ch - oy) - y*scale; }   // Y invertida: el mundo crece hacia el norte
+
+function path(rings){
+  ctx.beginPath();
+  for (const r of rings){
+    ctx.moveTo(sx(r[0]), toScreenY(r[1]));
+    for (let i=2;i<r.length;i+=2) ctx.lineTo(sx(r[i]), toScreenY(r[i+1]));
+    ctx.closePath();
+  }
+}
+
+let raf=0;
+function draw(){ if(!raf) raf = requestAnimationFrame(render); }
+
+function render(){
+  raf=0;
+  ctx.clearRect(0,0,cw,ch);
+  ctx.fillStyle = css('--map-void'); ctx.fillRect(0,0,cw,ch);
+
+  // Gipuzkoa ground
+  ctx.fillStyle = css('--map-bg');
+  path(D.gip); ctx.fill();
+
+  const cols = GRUPOS.map(g=>css(g.v));
+  const minPx = 1.1;   // level of detail
+  let drawn=0;
+
+  for (const idx of ORDER){
+    const f = F[idx];
+    if (!on[f[0]]) continue;
+    const b = f[10];
+    const px0 = sx(b[0]), px1 = sx(b[2]);
+    const py1 = toScreenY(b[1]), py0 = toScreenY(b[3]);
+    if (px1 < -2 || px0 > cw+2 || py1 < -2 || py0 > ch+2) continue;
+    if (px1-px0 < minPx && py1-py0 < minPx) continue;
+    ctx.fillStyle = cols[f[0]];
+    path(f[1]); ctx.fill();
+    drawn++;
+  }
+
+  // municipal boundaries
+  ctx.strokeStyle = css('--muni'); ctx.lineWidth = scale>fit*3 ? 0.9 : 0.55;
+  ctx.globalAlpha = .8;
+  for (const m of D.muni){ path(m.r); ctx.stroke(); }
+  ctx.globalAlpha = 1;
+
+  // outline of the province
+  ctx.strokeStyle = css('--ink-3'); ctx.lineWidth = 1.1;
+  path(D.gip); ctx.stroke();
+
+  // selection
+  if (sel>=0 && on[F[sel][0]]){
+    ctx.strokeStyle = css('--sel'); ctx.lineWidth = 2;
+    path(F[sel][1]); ctx.stroke();
+  } else if (hov>=0 && on[F[hov][0]]){
+    ctx.strokeStyle = css('--sel'); ctx.lineWidth = 1.4;
+    path(F[hov][1]); ctx.stroke();
+  }
+
+  // municipality labels once zoomed in
+  if (scale > fit*2.1){
+    ctx.font = '500 11px "IBM Plex Sans", sans-serif';
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    const placed=[];
+    const ms = D.muni.slice().sort((a,b)=>b.a-a.a);
+    for (const m of ms){
+      const x=sx(m.c[0]), y=toScreenY(m.c[1]);
+      if (x<40||x>cw-40||y<14||y>ch-14) continue;
+      if (placed.some(p=>Math.abs(p[0]-x)<62 && Math.abs(p[1]-y)<15)) continue;
+      placed.push([x,y]);
+      ctx.lineWidth=3; ctx.strokeStyle=css('--map-bg'); ctx.strokeText(m.n,x,y);
+      ctx.fillStyle=css('--ink-2'); ctx.fillText(m.n,x,y);
+    }
+  }
+  scalebar();
+}
+
+function scalebar(){
+  const targets=[100,200,500,1000,2000,5000,10000,20000];
+  let m=targets[0];
+  for (const t of targets){ if (t*scale <= 110) m=t; }
+  document.getElementById('scrule').style.width = (m*scale)+'px';
+  document.getElementById('sctxt').textContent = m>=1000 ? (m/1000)+' km' : m+' m';
+}
+
+// ---------- hit test ----------
+function inRing(r,x,y){
+  let hit=false;
+  for (let i=0,j=r.length-2;i<r.length;j=i,i+=2){
+    const xi=r[i],yi=r[i+1],xj=r[j],yj=r[j+1];
+    if (((yi>y)!==(yj>y)) && (x < (xj-xi)*(y-yi)/(yj-yi)+xi)) hit=!hit;
+  }
+  return hit;
+}
+function pick(px,py){
+  const x = (px-ox)/scale, y = ((ch-oy)-py)/scale;
+  for (let n=ORDER.length-1;n>=0;n--){
+    const idx=ORDER[n], f=F[idx];
+    if (!on[f[0]]) continue;
+    const b=f[10];
+    if (x<b[0]||x>b[2]||y<b[1]||y>b[3]) continue;
+    for (const r of f[1]) if (inRing(r,x,y)) return idx;
+  }
+  return -1;
+}
+
+// ---------- interaction ----------
+let dragging=false, moved=false, lx=0, ly=0;
+cv.addEventListener('pointerdown', e=>{
+  dragging=true; moved=false; lx=e.clientX; ly=e.clientY;
+  cv.classList.add('drag'); cv.setPointerCapture(e.pointerId);
+});
+cv.addEventListener('pointermove', e=>{
+  const r=cv.getBoundingClientRect(), px=e.clientX-r.left, py=e.clientY-r.top;
+  if (dragging){
+    const dx=e.clientX-lx, dy=e.clientY-ly;
+    if (Math.abs(dx)+Math.abs(dy)>3) moved=true;
+    ox+=dx; oy-=dy; lx=e.clientX; ly=e.clientY;
+    draw(); tipHide(); return;
+  }
+  const h=pick(px,py);
+  if (h!==hov){ hov=h; draw(); }
+  if (h>=0){ tipShow(px,py,F[h]); } else tipHide();
+});
+cv.addEventListener('pointerup', e=>{
+  dragging=false; cv.classList.remove('drag');
+  if (moved) return;
+  const r=cv.getBoundingClientRect();
+  const h=pick(e.clientX-r.left, e.clientY-r.top);
+  sel = h; showDetail(h); draw();
+});
+cv.addEventListener('pointerleave', ()=>{ hov=-1; tipHide(); draw(); });
+cv.addEventListener('wheel', e=>{
+  e.preventDefault();
+  const r=cv.getBoundingClientRect(), px=e.clientX-r.left, py=e.clientY-r.top;
+  zoomAt(px,py, Math.exp(-e.deltaY*0.0016));
+},{passive:false});
+
+function zoomAt(px,py,k){
+  const ns = Math.max(fit*0.85, Math.min(fit*90, scale*k));
+  const wx=(px-ox)/scale, wy=((ch-oy)-py)/scale;
+  scale=ns;
+  ox = px - wx*scale;
+  oy = (ch-py) - wy*scale;
+  draw();
+}
+document.getElementById('zin').onclick = ()=>zoomAt(cw/2,ch/2,1.5);
+document.getElementById('zout').onclick= ()=>zoomAt(cw/2,ch/2,1/1.5);
+document.getElementById('zrst').onclick= ()=>{ reset(); };
+
+const tip=document.getElementById('tip');
+function tipShow(px,py,f){
+  tip.textContent = f[2] + ' · ' + f[8].toLocaleString('es-ES') + ' ha';
+  tip.style.opacity=1;
+  const r=cv.getBoundingClientRect();
+  let l=px+14, t=py+14;
+  if (l+tip.offsetWidth > r.width-8) l = px - tip.offsetWidth - 12;
+  if (t+tip.offsetHeight > r.height-8) t = py - tip.offsetHeight - 12;
+  tip.style.left=l+'px'; tip.style.top=t+'px';
+}
+function tipHide(){ tip.style.opacity=0; }
+
+// ---------- panel ----------
+const nf = n => Math.round(n).toLocaleString('es-ES');
+const S = D.stats, NP = D.npol;
+const totArb = [0,1,2,3].reduce((a,k)=>a+(S[k]||0),0);
+
+document.getElementById('kpi').textContent = nf(S[0]);
+document.getElementById('kpinote').innerHTML =
+  '<b>' + (100*S[0]/GIP_HA).toFixed(1).replace('.',',') + '&nbsp;%</b> del territorio · ' +
+  '<b>' + (100*S[0]/totArb).toFixed(1).replace('.',',') + '&nbsp;%</b> de la superficie arbolada';
+document.getElementById('bartot').textContent = nf(totArb) + ' ha';
+
+const bar=document.getElementById('bar');
+GRUPOS.forEach(g=>{
+  const s=document.createElement('span');
+  s.style.flex = (S[g.k]||0);
+  s.style.background = 'var(' + g.v + ')';
+  s.title = g.n + ' · ' + nf(S[g.k]||0) + ' ha';
+  bar.appendChild(s);
+});
+
+const leg=document.getElementById('leg');
+GRUPOS.forEach(g=>{
+  const b=document.createElement('button');
+  b.type='button'; b.className='legrow'; b.setAttribute('aria-pressed','true');
+  b.innerHTML =
+    '<span class="sw" style="background:var('+g.v+')"></span>' +
+    '<span><span class="legname">'+g.n+'</span><span class="legsub">'+g.s+'</span></span>' +
+    '<span class="legval">'+nf(S[g.k]||0)+' ha<br>'+nf(NP[g.k]||0)+' masas</span>';
+  b.onclick = ()=>{
+    on[g.k]=!on[g.k];
+    b.setAttribute('aria-pressed', String(on[g.k]));
+    if (sel>=0 && !on[F[sel][0]]) { sel=-1; showDetail(-1); }
+    draw();
+  };
+  leg.appendChild(b);
+});
+
+// species table
+let spOpen=false;
+function renderSp(){
+  const rows=[];
+  GRUPOS.forEach(g=>{ (D.sp[g.k]||[]).forEach(([n,a])=>rows.push([n,a,g])); });
+  rows.sort((a,b)=>b[1]-a[1]);
+  const show = spOpen ? rows : rows.slice(0,9);
+  document.getElementById('sptb').innerHTML = show.map(([n,a,g])=>
+    '<tr><td><span class="spdot" style="background:var('+g.v+')"></span>'+n+'</td>' +
+    '<td>'+nf(a)+' ha</td></tr>').join('');
+  document.getElementById('more').textContent =
+    spOpen ? 'Ver solo las principales' : 'Ver todas las especies ('+rows.length+')';
+}
+document.getElementById('more').onclick = ()=>{ spOpen=!spOpen; renderSp(); };
+renderSp();
+
+// detail
+function showDetail(i){
+  const em=document.getElementById('dempty'), bd=document.getElementById('dbody');
+  if (i<0){ em.hidden=false; bd.hidden=true; return; }
+  const f=F[i], g=GRUPOS[f[0]];
+  em.hidden=true; bd.hidden=false;
+  const rows=[['Ocupación', f[3]+' %'], ['Estado de masa', f[4]||'—'],
+              ['Cabida cubierta', f[7]+' %'], ['Superficie', nf(f[8])+' ha'],
+              ['Tipo estructural', f[9]||'—']];
+  if (f[5]) rows.splice(1,0,['Especie secundaria', f[5]+' · '+f[6]+' %']);
+  bd.innerHTML =
+    '<span class="pill" style="background:var('+g.sv+'); color:var(--ink)">'+g.n+'</span>' +
+    '<p class="dt-sp">'+f[2]+'</p>' +
+    '<p class="dt-t">'+g.s+'</p>' +
+    '<dl class="kv">' + rows.map(r=>'<dt>'+r[0]+'</dt><dd>'+r[1]+'</dd>').join('') + '</dl>';
+}
+
+setTimeout(()=>{ const h=document.getElementById('hint'); if(h) h.remove(); }, 5200);
+window.addEventListener('resize', resize);
+matchMedia('(prefers-color-scheme:dark)').addEventListener('change', ()=>draw());
+resize(); reset();
+})();
+</script>
