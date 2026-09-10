@@ -25,9 +25,12 @@ src/                     lo que se ejecuta
   actualiza.py           descarga AEMET y regenera el disparo diario
   construye_base.py      regenera el mapa (una vez al año)
   climatologia_base.json media 1970-2015, referencia del gráfico
-web/index.html           la página
-publico/                 lo que se publica
+web/                     la app
   index.html
+  manifest.json          para instalarla en el móvil
+  sw.js                  caché offline
+publico/                 lo que se publica
+  index.html · manifest.json · sw.js · iconos/
   datos/base.json        ~900 KB · el mapa · cacheado
   datos/disparo.json      ~20 KB · el índice · cada día
 docs/                    el proyecto: decisiones, datos, modelo
@@ -48,6 +51,21 @@ nombre `AEMET_API_KEY`.
 
 **4. Listo.** El flujo corre cada mañana a las 05:40 UTC (07:40 en Gipuzkoa) y también
 a mano desde la pestaña *Actions*.
+
+### Instalarla en el móvil
+
+Ontto es una **PWA**: se instala desde el navegador, sin tienda de aplicaciones.
+
+- **Android / Chrome** — abrir la web y aceptar *«Instalar aplicación»*, o
+  *Menú → Añadir a pantalla de inicio*.
+- **iPhone / Safari** — *Compartir → Añadir a pantalla de inicio*.
+
+Una vez instalada **funciona sin cobertura**: el mapa y el último índice descargado quedan
+guardados en el teléfono. Es el requisito, no un extra — en el monte no hay red, y es
+justo donde se usa.
+
+El índice se refresca solo cuando hay conexión; sin ella se muestra el último disponible,
+con su fecha en la cabecera.
 
 ### En local
 

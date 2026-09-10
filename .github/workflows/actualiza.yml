@@ -50,7 +50,7 @@ jobs:
           PY
 
       - name: Copia la web
-        run: cp web/index.html publico/index.html
+        run: cp web/index.html web/manifest.json web/sw.js publico/
 
       - uses: actions/upload-pages-artifact@v3
         with:

@@ -2,8 +2,15 @@
 <html lang="es">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#16211c">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="iconos/apple-touch-icon.png">
+<link rel="icon" href="iconos/favicon-32.png" sizes="32x32">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Ontto">
+<meta name="description" content="Probabilidad de fructificación de onddo por rodal en Gipuzkoa.">
 <title>Ontto — onddos en Gipuzkoa</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -62,23 +69,47 @@ canvas#cv.drag{cursor:grabbing}
 .eyebrow{font-size:10.5px; font-weight:600; letter-spacing:.1em; text-transform:uppercase;
          color:var(--ink-3); margin:0 0 10px}
 
-/* tira de dias */
-.days{display:flex; gap:6px; overflow-x:auto; padding:2px 0 6px; -webkit-overflow-scrolling:touch}
-.day{flex:0 0 auto; min-width:60px; border:1px solid var(--line-2); background:var(--surface);
-  border-radius:var(--r); padding:7px 6px 8px; cursor:pointer; text-align:center;
-  font:inherit; color:inherit; line-height:1.25}
-.day:hover{background:var(--surface-2)}
-.day:focus-visible{outline:2px solid var(--accent); outline-offset:1px}
-.day .dn{font-size:10.5px; font-weight:600; letter-spacing:.05em; text-transform:uppercase;
-  color:var(--ink-3)}
-.day .dd{font-size:11px; color:var(--ink-3); font-family:"IBM Plex Mono",monospace}
-.day .dv{font-family:"IBM Plex Mono",monospace; font-size:19px; font-weight:600;
-  margin-top:3px; font-variant-numeric:tabular-nums}
-.day .bar{height:3px; border-radius:2px; margin-top:5px; background:var(--line)}
-.day .bar i{display:block; height:100%; border-radius:2px; background:var(--accent)}
-.day[aria-current="true"]{border-color:var(--accent); box-shadow:inset 0 0 0 1px var(--accent)}
-.day.prev{border-style:dashed}
-.day.prev .dn{color:var(--accent)}
+/* ubicacion */
+#bloc{position:absolute; right:13px; bottom:calc(13px + 3*38px); width:32px; height:32px;
+  border:1px solid var(--line-2); background:var(--surface); color:var(--ink);
+  border-radius:var(--r); cursor:pointer; box-shadow:var(--shadow);
+  display:grid; place-items:center; padding:0; font-size:15px; line-height:1}
+#bloc:hover{background:var(--surface-2)}
+#bloc:focus-visible{outline:2px solid var(--accent); outline-offset:1px}
+#bloc[data-estado="ok"]{border-color:var(--accent); color:var(--accent)}
+#bloc[data-estado="buscando"]{opacity:.55}
+#bloc[data-estado="error"],#bloc[data-estado="fuera"]{border-color:var(--line-2); opacity:.6}
+.miloc{font-size:12.5px; color:var(--ink-2); margin:0 0 12px; padding:10px 12px;
+  background:var(--surface-2); border-left:2px solid var(--accent); border-radius:0 5px 5px 0}
+.miloc b{color:var(--ink)}
+
+/* navegacion de dias */
+.nav{display:flex; align-items:center; gap:10px}
+.nav button{width:38px; height:38px; flex:none; border:1px solid var(--line-2);
+  background:var(--surface); color:var(--ink); border-radius:var(--r); font-size:17px;
+  cursor:pointer; display:grid; place-items:center; line-height:1; padding:0}
+.nav button:hover:not(:disabled){background:var(--surface-2)}
+.nav button:disabled{opacity:.3; cursor:not-allowed}
+.nav button:focus-visible{outline:2px solid var(--accent); outline-offset:1px}
+.nav .mid{flex:1; text-align:center; min-width:0}
+.nav .dia{font-family:"Fraunces",Georgia,serif; font-size:17px; font-weight:600;
+  line-height:1.15; text-wrap:balance}
+.nav .sub{font-size:11px; color:var(--ink-3); margin-top:2px}
+.nav .sub.prev{color:var(--accent)}
+
+.spark{display:flex; align-items:flex-end; gap:2px; height:34px; margin:14px 0 0}
+.spark button{flex:1; min-width:0; padding:0; border:0; background:none; cursor:pointer;
+  height:100%; display:flex; align-items:flex-end; position:relative}
+.spark button:focus-visible{outline:2px solid var(--accent); outline-offset:1px}
+.spark i{display:block; width:100%; border-radius:2px 2px 0 0; background:var(--line-2);
+  min-height:2px; transition:background .12s}
+.spark button[data-on="1"] i{background:var(--accent)}
+.spark button[data-sel="1"] i{background:var(--sel)}
+.spark button[data-prev="1"] i{opacity:.55}
+.sparklab{display:flex; justify-content:space-between; font-size:10px; color:var(--ink-3);
+  margin-top:5px; font-family:"IBM Plex Mono",monospace}
+.hoymark{position:absolute; bottom:-6px; left:50%; transform:translateX(-50%);
+  width:4px; height:4px; border-radius:50%; background:var(--ink-3)}
 
 /* veredicto */
 .verdict{display:flex; align-items:baseline; gap:10px; margin:0 0 4px}
@@ -167,13 +198,21 @@ canvas#ch{display:block; width:100%; height:118px}
 
   <aside>
     <div class="blk">
-      <p class="eyebrow">Hoy y los próximos días</p>
-      <div class="days" id="days"></div>
-      <p class="vnote" id="dnote" style="margin-top:4px;font-size:11.5px">&nbsp;</p>
+      <div class="nav">
+        <button id="dprev" type="button" aria-label="Día anterior">‹</button>
+        <div class="mid">
+          <div class="dia" id="dlabel">—</div>
+          <div class="sub" id="dnote">&nbsp;</div>
+        </div>
+        <button id="dnext" type="button" aria-label="Día siguiente">›</button>
+      </div>
+      <div class="spark" id="spark"></div>
+      <div class="sparklab"><span id="sparkA"></span><span id="sparkB"></span></div>
     </div>
 
     <div class="blk">
       <p class="eyebrow">Condiciones para onddo</p>
+      <p class="miloc" id="miloc" hidden></p>
       <p class="verdict"><span class="vnum" id="vnum">—</span><span class="vmax">/ 100</span></p>
       <p class="vword" id="vword">&nbsp;</p>
       <p class="vnote" id="vnote">&nbsp;</p>
@@ -223,6 +262,7 @@ canvas#ch{display:block; width:100%; height:118px}
     <div class="offbanner" id="off" hidden>Hoy el mapa está apagado</div>
     <div id="tip"></div>
     <div class="scale"><div class="rule" id="scrule"></div><span id="sctxt"></span></div>
+    <button id="bloc" type="button" aria-label="Dónde estoy" title="Dónde estoy">◎</button>
     <div class="ctr">
       <button id="zin" type="button" aria-label="Acercar">+</button>
       <button id="zout" type="button" aria-label="Alejar">−</button>
@@ -244,7 +284,7 @@ try{
 }catch(e){
   document.body.innerHTML='<div style="padding:40px;font-family:system-ui;max-width:34em;'
     +'margin:0 auto;line-height:1.6"><h1 style="font-size:20px">No se pudieron cargar los datos</h1>'
-    +'<p>Comprueba la conexión y vuelve a intentarlo.</p></div>';
+    +'<p>Si es la primera vez que abres Ontto, necesitas conexión. Después funciona sin ella.</p></div>';
   return;
 }
 const [MINX,MINY,MAXX,MAXY]=D.bbox, W=MAXX-MINX, H=MAXY-MINY;
@@ -343,6 +383,7 @@ function render(){
       ctx.fillStyle=css('--ink-2'); ctx.fillText(m.n,x,y);
     }
   }
+  pintaMiPos();
   scalebar();
 }
 function scalebar(){
@@ -479,10 +520,16 @@ function update(){
   vals=DIS.live.v[di];
   const f=DIS.live.d[di];
   const esPrev = DIS.live.o && DIS.live.o[di]===1;
-  document.getElementById('dnote').innerHTML = esPrev
-    ? '<b>'+fmtFecha(f)+'</b> \u00b7 predicci\u00f3n de AEMET, no observaci\u00f3n.'
-    : '<b>'+fmtFecha(f)+'</b> \u00b7 datos observados.';
-  pintaDias();
+  const dl=document.getElementById('dlabel');
+  dl.innerHTML = nomDia(di) + ' <span style="color:var(--ink-3);font-weight:400">'
+    + fechaCorta(di) + '</span>';
+  const dn=document.getElementById('dnote');
+  dn.className = 'sub' + (esPrev ? ' prev' : '');
+  dn.textContent = esPrev ? 'predicci\u00f3n de AEMET' : 'datos observados';
+  document.getElementById('dprev').disabled = di<=DESDE;
+  document.getElementById('dnext').disabled = di>=HASTA;
+  pintaSpark();
+  if(typeof textoUbicacion==='function') textoUbicacion();
   const mx=Math.max(...vals);
   const [pal,nota]=palabra(mx);
   document.getElementById('vnum').textContent=Math.round(mx*100);
@@ -492,11 +539,12 @@ function update(){
   const doy=Math.max(0,Math.min(365,Math.round((Date.parse(f)-Date.parse(y+'-01-01'))/864e5)));
   const cl=Math.max(...DIS.clim[doy]);
   let cmp='';
-  if(cl>0.02){
+  if(cl>0.02 && mx>=0.02){
     const pct=Math.round(100*(mx-cl)/cl);
     cmp=' Frente a la media de esta fecha, <b>'+(pct>=0?'+':'')+pct+'&nbsp;%</b>.';
   }
-  document.getElementById('vnote').innerHTML=nota+cmp;
+  const viene = (di===HOY) ? loQueViene() : '';
+  document.getElementById('vnote').innerHTML = nota + cmp + (viene ? ' ' + viene : '');
   document.getElementById('off').hidden = mx>=0.02 ? true : false;
   // bandas
   document.getElementById('bands').innerHTML=ZS.map((z,i)=>
@@ -522,38 +570,204 @@ function showDetail(i){
   bd.innerHTML='<p class="dt-sp">'+f[3]+'</p><dl class="kv">'+
     rows.map(r=>'<dt>'+r[0]+'</dt><dd>'+r[1]+'</dd>').join('')+'</dl>';
 }
-const DIAS=['dom','lun','mar','mi\u00e9','jue','vie','s\u00e1b'];
-function pintaDias(){
-  const desde=Math.max(0,HOY-4), hasta=DIS.live.d.length-1;
+const DIAS=['domingo','lunes','martes','mi\u00e9rcoles','jueves','viernes','s\u00e1bado'];
+const MESC=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+const DESDE=Math.max(0,HOY-4), HASTA=DIS.live.d.length-1;
+
+function nomDia(k){
+  if(k===HOY) return 'Hoy';
+  if(k===HOY+1) return 'Ma\u00f1ana';
+  if(k===HOY-1) return 'Ayer';
+  const d=new Date(DIS.live.d[k]+'T12:00:00');
+  return DIAS[d.getDay()].charAt(0).toUpperCase()+DIAS[d.getDay()].slice(1);
+}
+function fechaCorta(k){
+  const d=new Date(DIS.live.d[k]+'T12:00:00');
+  return d.getDate()+' '+MESC[d.getMonth()];
+}
+function idxDe(k){ return Math.max(...DIS.live.v[k]); }
+
+function pintaSpark(){
+  const cont=document.getElementById('spark');
+  const mx=Math.max(0.12, ...Array.from({length:HASTA-DESDE+1},(_,i)=>idxDe(DESDE+i)));
   let html='';
-  for(let k=desde;k<=hasta;k++){
-    const f=DIS.live.d[k], v=Math.max(...DIS.live.v[k]);
-    const prev=DIS.live.o && DIS.live.o[k]===1;
-    const dt=new Date(f+'T12:00:00');
-    const nom = k===HOY ? 'Hoy' : (k===HOY+1 ? 'Ma\u00f1ana' : DIAS[dt.getDay()]);
-    html+='<button type="button" class="day'+(prev?' prev':'')+'" data-k="'+k+'"'+
-      (k===di?' aria-current="true"':'')+'>'+
-      '<span class="dn">'+nom+'</span>'+
-      '<span class="dd">'+dt.getDate()+'/'+(dt.getMonth()+1)+'</span>'+
-      '<span class="dv">'+Math.round(v*100)+'</span>'+
-      '<span class="bar"><i style="width:'+Math.round(Math.min(v/0.9,1)*100)+'%"></i></span>'+
-      '</button>';
+  for(let k=DESDE;k<=HASTA;k++){
+    const v=idxDe(k), prev=DIS.live.o && DIS.live.o[k]===1;
+    const h=Math.max(4, Math.round(v/mx*100));
+    html+='<button type="button" data-k="'+k+'"'
+      +' data-sel="'+(k===di?1:0)+'" data-on="'+(v>0.02?1:0)+'"'
+      +' data-prev="'+(prev?1:0)+'"'
+      +' title="'+nomDia(k)+' '+fechaCorta(k)+' \u00b7 '+Math.round(v*100)+'">'
+      +'<i style="height:'+h+'%"></i>'
+      +(k===HOY?'<span class="hoymark"></span>':'')+'</button>';
   }
-  const cont=document.getElementById('days');
   cont.innerHTML=html;
-  cont.querySelectorAll('.day').forEach(b=>{
-    b.onclick=()=>{ di=+b.dataset.k; update(); };
-  });
-  const act=cont.querySelector('[aria-current="true"]');
-  if(act && act.scrollIntoView) try{ act.scrollIntoView({block:'nearest',inline:'center'}); }catch(e){}
+  cont.querySelectorAll('button').forEach(b=>{ b.onclick=()=>{ di=+b.dataset.k; update(); }; });
+  document.getElementById('sparkA').textContent=fechaCorta(DESDE);
+  document.getElementById('sparkB').textContent=fechaCorta(HASTA);
 }
 
+// Lo que viene: el mejor dia por delante, si lo hay y merece mencion.
+function loQueViene(){
+  let mejor=-1, vm=-1;
+  for(let k=HOY+1;k<=HASTA;k++){ const v=idxDe(k); if(v>vm){ vm=v; mejor=k; } }
+  if(mejor<0) return '';
+  const hoyv=idxDe(HOY);
+  if(vm<0.05) return 'En los pr\u00f3ximos d\u00edas <b>no se espera nada</b>.';
+  if(vm>hoyv*1.25+0.03)
+    return 'Viene a m\u00e1s: el mejor d\u00eda de la ventana es <b>'+nomDia(mejor).toLowerCase()
+      +' '+fechaCorta(mejor)+'</b>, con <b>'+Math.round(vm*100)+'</b>.';
+  if(hoyv>vm*1.25+0.03) return 'Va a menos: los pr\u00f3ximos d\u00edas empeoran.';
+  return 'Los pr\u00f3ximos d\u00edas siguen parecidos.';
+}
+
+/* ---------- ubicación del usuario ---------- */
+let miPos = null;              // {x, y, prec} en coordenadas del mapa
+let miRodal = -1;
+let siguiendo = false;
+
+// WGS84 -> ETRS89 UTM 30N. Precisión de metros, de sobra aquí.
+function utm30(lon, lat){
+  const a = 6378137, f = 1/298.257222101, k0 = 0.9996, lon0 = -3*Math.PI/180;
+  const e2 = f*(2-f), ep2 = e2/(1-e2);
+  const la = lat*Math.PI/180, lo = lon*Math.PI/180;
+  const N = a/Math.sqrt(1 - e2*Math.pow(Math.sin(la),2));
+  const T = Math.pow(Math.tan(la),2);
+  const C = ep2*Math.pow(Math.cos(la),2);
+  const A = (lo - lon0)*Math.cos(la);
+  const M = a*((1 - e2/4 - 3*e2*e2/64 - 5*Math.pow(e2,3)/256)*la
+        - (3*e2/8 + 3*e2*e2/32 + 45*Math.pow(e2,3)/1024)*Math.sin(2*la)
+        + (15*e2*e2/256 + 45*Math.pow(e2,3)/1024)*Math.sin(4*la)
+        - (35*Math.pow(e2,3)/3072)*Math.sin(6*la));
+  const x = k0*N*(A + (1-T+C)*Math.pow(A,3)/6
+        + (5 - 18*T + T*T + 72*C - 58*ep2)*Math.pow(A,5)/120) + 500000;
+  const y = k0*(M + N*Math.tan(la)*(A*A/2 + (5 - T + 9*C + 4*C*C)*Math.pow(A,4)/24
+        + (61 - 58*T + T*T + 600*C - 330*ep2)*Math.pow(A,6)/720));
+  return [x, y];
+}
+
+function rodalEn(x, y){
+  for(let i = F.length-1; i >= 0; i--){
+    const b = F[i][8];
+    if(x < b[0] || x > b[2] || y < b[1] || y > b[3]) continue;
+    for(const r of F[i][0]) if(inRing(r, x, y)) return i;
+  }
+  return -1;
+}
+
+function pintaMiPos(){
+  if(!miPos) return;
+  const px = sx(miPos.x), py = sy(miPos.y);
+  if(px < -40 || px > cw+40 || py < -40 || py > ch+40) return;
+  // radio de precisión
+  if(miPos.prec > 20){
+    const r = Math.max(6, miPos.prec*scale);
+    ctx.beginPath(); ctx.arc(px, py, r, 0, 6.284);
+    ctx.fillStyle = css('--accent'); ctx.globalAlpha = .13; ctx.fill();
+    ctx.globalAlpha = 1;
+  }
+  ctx.beginPath(); ctx.arc(px, py, 7, 0, 6.284);
+  ctx.fillStyle = css('--accent'); ctx.fill();
+  ctx.lineWidth = 2.5; ctx.strokeStyle = css('--surface'); ctx.stroke();
+}
+
+function textoUbicacion(){
+  const c = document.getElementById('miloc');
+  if(!c) return;
+  if(!miPos){ c.hidden = true; return; }
+  c.hidden = false;
+  if(miRodal < 0){
+    c.innerHTML = '<b>Estás fuera de un rodal con datos.</b> Puede ser plantación de '
+      + 'conífera, pasto o zona urbana: ahí Ontto no dice nada.';
+    return;
+  }
+  const f = F[miRodal], d = disAt(vals, f[2]);
+  const ind = f[1]*d;
+  c.innerHTML = '<b>' + f[3] + '</b>, ' + f[2] + '&nbsp;m. Potencial '
+    + f[1].toFixed(2).replace('.',',') + '&nbsp;kg/ha&middot;año. '
+    + (d < 0.02
+        ? 'Hoy aquí el disparo está <b>apagado</b>.'
+        : 'Hoy aquí el índice es <b>' + ind.toFixed(2).replace('.',',') + '</b>.');
+}
+
+function fijaUbicacion(p, centrar){
+  const xy = utm30(p.coords.longitude, p.coords.latitude);
+  const x = xy[0] - D.bbox[0], y = xy[1] - D.bbox[1];
+  const dentro = x > -3000 && x < (D.bbox[2]-D.bbox[0]) + 3000
+              && y > -3000 && y < (D.bbox[3]-D.bbox[1]) + 3000;
+  const btn = document.getElementById('bloc');
+  if(!dentro){
+    if(btn) btn.dataset.estado = 'fuera';
+    const c = document.getElementById('miloc');
+    if(c){ c.hidden = false; c.innerHTML = '<b>Estás fuera de Gipuzkoa.</b> Ontto solo '
+      + 'cubre este territorio.'; }
+    miPos = null; draw();
+    return;
+  }
+  miPos = {x: x, y: y, prec: p.coords.accuracy || 0};
+  miRodal = rodalEn(x, y);
+  if(btn) btn.dataset.estado = 'ok';
+  if(centrar){
+    scale = Math.max(scale, fit*6);
+    ox = cw/2 - x*scale;
+    oy = ch/2 - y*scale;                 // de sy(): ch/2 = (ch-oy) - y*scale
+  }
+  if(miRodal >= 0){ sel = miRodal; showDetail(sel); }
+  textoUbicacion(); draw();
+}
+
+function localiza(centrar){
+  const btn = document.getElementById('bloc');
+  const c = document.getElementById('miloc');
+  if(!navigator.geolocation){
+    if(c){ c.hidden = false; c.textContent = 'Este navegador no ofrece ubicación.'; }
+    return;
+  }
+  if(btn) btn.dataset.estado = 'buscando';
+  navigator.geolocation.getCurrentPosition(
+    function(p){ fijaUbicacion(p, centrar); },
+    function(err){
+      if(btn) btn.dataset.estado = 'error';
+      if(c){
+        c.hidden = false;
+        c.innerHTML = err && err.code === 1
+          ? '<b>Permiso denegado.</b> Actívalo en los ajustes del navegador para ver dónde estás.'
+          : '<b>No se pudo obtener la ubicación.</b> Prueba al aire libre, con el GPS activo.';
+      }
+    },
+    {enableHighAccuracy: true, timeout: 15000, maximumAge: 30000});
+}
+
+(function(){
+  const b = document.getElementById('bloc');
+  if(b) b.onclick = function(){ localiza(true); };
+  // al abrir, intentar en silencio: si el permiso ya está dado no molesta a nadie
+  if(navigator.permissions && navigator.permissions.query){
+    navigator.permissions.query({name: 'geolocation'}).then(function(st){
+      if(st.state === 'granted') localiza(false);
+    }).catch(function(){});
+  }
+})();
+
+document.getElementById('dprev').onclick=()=>{ if(di>DESDE){ di--; update(); } };
+document.getElementById('dnext').onclick=()=>{ if(di<HASTA){ di++; update(); } };
+window.addEventListener('keydown',e=>{
+  if(e.key==='ArrowLeft'&&di>DESDE){ di--; update(); }
+  if(e.key==='ArrowRight'&&di<HASTA){ di++; update(); }
+});
 window.addEventListener('resize',resize);
 matchMedia('(prefers-color-scheme:dark)').addEventListener('change',()=>{draw();drawChart();});
 const up=document.getElementById('upd');
 if(up && DIS.actualizado) up.textContent='Actualizado '+DIS.actualizado;
 resize(); reset(); update();
 })();
+</script>
+<script>
+if('serviceWorker' in navigator){
+  window.addEventListener('load',function(){
+    navigator.serviceWorker.register('sw.js').catch(function(){});
+  });
+}
 </script>
 </body>
 </html>
