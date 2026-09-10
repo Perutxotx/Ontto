@@ -47,6 +47,11 @@ con un correo; llega al momento y es gratis.
 `Settings → Secrets and variables → Actions → New repository secret`,
 nombre `AEMET_API_KEY`.
 
+> ⚠️ **Las claves de AEMET caducan.** La actual expira el **13 de diciembre de 2026**.
+> Cuando llegue, el flujo empezará a fallar: se pide otra en el mismo sitio y se
+> reemplaza el secreto. El flujo avisa solo, porque la comprobación de sanidad rechaza
+> publicar si el último dato observado tiene más de 4 días.
+
 **3. Activar Pages:** `Settings → Pages → Source: GitHub Actions`.
 
 **4. Listo.** El flujo corre cada mañana a las 05:40 UTC (07:40 en Gipuzkoa) y también
