@@ -1,6 +1,6 @@
 # Índice de literatura — Ontto
 
-15 documentos. Nomenclatura: `AAAA_PrimerAutor_Tema.pdf`, ordenados por año.
+16 documentos. Nomenclatura: `AAAA_PrimerAutor_Tema.pdf`, ordenados por año.
 La síntesis de factores extraída de todo esto está en
 [docs/01-factores-fructificacion.md](../docs/01-factores-fructificacion.md).
 
@@ -151,6 +151,37 @@ Gestión Ambiental de Navarra / proyecto Micosylva (2011).
 2005–2010, cruzadas por sustrato (ácido/básico) y luminosidad, con la producción media de
 MIC1 en kg/ha·año para cada combinación. Es la única fuente con producción medida en
 bosque y especie equivalentes a los de Gipuzkoa.
+
+### ★ `2018_TFG_Escribano.pdf`
+Escribano Gil de Gómez (2018). *Identificación de zonas potenciales de fructificación del
+Boletus edulis en la Comarca de Pinares (Soria y Burgos).* TFG, dir. Pérez Cabello,
+Facultad de Filosofía y Letras, Universidad de Zaragoza.
+
+**Nuestra capa POTENCIAL, hecha cinco años antes y en Soria.** Evaluación multicriterio por
+superposición ponderada, píxel de 100 m, siete variables:
+
+| Variable | Peso | |
+|---|---|---|
+| Tipo de vegetación | 25 % | limitante |
+| pH del suelo | 20 % | limitante |
+| Densidad de cubierta arbórea | 15 % | limitante |
+| Calidad de la vegetación (IFN3) | 15 % | limitante |
+| Precipitación media anual | 10 % | condicionante |
+| Temperatura media anual | 10 % | condicionante |
+| Orientación | 5 % | condicionante |
+
+Coincide con Ontto en tres decisiones tomadas por separado: especie hospedante como filtro
+duro con valor nulo, pH como segundo discriminador, y **orientación como el factor menos
+influyente de todos**.
+
+⚠️ **Discrepa en la cubierta arbórea, y en el sentido contrario al nuestro:** 0 % → nulo,
+0–50 % → medio, 50–70 % → alto, 70–100 % → **muy alto**. Más dosel, más potencial. Es
+pinar mediterráneo, donde el dosel protege de la evaporación, frente a nuestro hayedo
+atlántico, donde lo que falta es luz — y su valoración es criterio experto mientras la
+nuestra está medida en 60 parcelas. Pero deja la decisión más frágil de la capa POTENCIAL
+con una fuente apuntando al revés. Ver [docs/04-capa-potencial.md](../docs/04-capa-potencial.md).
+
+Sin validar: no contrasta el mapa con ninguna recolección real. No resuelve A1.
 
 ### ★★★ `2018_GobNavarra_Diagnostico-hongos-ANEXOS-parcelas-y-productividad.pdf`
 Gobierno de Navarra, Dirección General de Medio Ambiente y Agua (2018).

@@ -31,6 +31,48 @@ debajo del 30 % de su capacidad, y el 0,6 % por debajo del 20 %.
 otoño fue realmente seco — **1985, con el 40 % de capacidad**. El siguiente peor, 2014, ya
 estaba al 58 %.
 
+### ⚠️ Corrección de 2026-09-15: esa conclusión es climatológica, y 2026 la rompe
+
+Lo de arriba vale para **1970–2015**. Comprobado el balance en vivo contra el histórico,
+misma AWC (74 mm), misma ET0 de Hargreaves y mismo cubo:
+
+| Mes | 1970–2015 | **2026** |
+|---|---|---|
+| Julio | 56 % de capacidad | **21 %** |
+| Agosto | 57 % | **24 %** |
+| Septiembre | 67 % | **21 %** |
+
+Septiembre de 2026 va por **15,4 mm**. El mínimo de los 46 años del registro fue 1985 con
+29 mm, y el percentil 5 está en 38 mm. Es decir: **2026 está por debajo de todo lo
+observado en el histórico**, casi a la mitad del peor año.
+
+Descartado el artefacto de arranque: el cubo se inicializa el 13 de abril y se probó con
+40, 60, 80 y 100 % de AWC — **los cuatro convergen al mismo valor**, 13,4 mm el último día.
+La condición inicial se ha olvidado por completo. Las dos series no se construyen igual (el
+histórico promedia cubos por estación, el vivo corre un cubo sobre la lluvia promediada), y
+esa diferencia favorece que el vivo salga *más húmedo*, no más seco: la brecha es un suelo,
+no un techo.
+
+**Consecuencia para el modelo.** El término `f_W = clip(W5 / (0,40·AWC), 0, 1)` es
+prácticamente **código muerto en el histórico** — vale exactamente 1 el 97,7 % de los días
+de otoño. En 2026 está activo el **100 % de los días** de julio, agosto y septiembre, y a
+6 de septiembre vale **0,45**: por sí solo recorta el índice a menos de la mitad.
+
+Un término que nunca se activó en 46 años de calibración está hoy decidiendo el resultado,
+y su único parámetro —el umbral del 40 % de AWC— **se eligió, no se ajustó**. Nadie ha
+comprobado nunca si la penalización tiene la forma correcta, porque hasta ahora no hacía
+falta. Es la debilidad más urgente del modelo, por delante de las tres ya conocidas.
+
+Aquí es donde entra **Ágreda et al. 2015** (Glob. Chang. Biol. 21(9), DOI 10.1111/gcb.12960):
+sostiene que lo limitante es la **demanda evapotranspirativa**, no la lluvia. Comprobada la
+tendencia en nuestra propia serie 1970–2015, la ET0 **no sube** de forma detectable
+(otoño −0,8 % en 46 años, r = −0,04; verano +3,1 %, r = +0,15; ninguna significativa). Así
+que el problema de 2026 **no es una tendencia climática en la demanda** — es un déficit de
+lluvia puntual y extremo. Pero sigue haciendo falta el artículo para saber con qué forma
+funcional penalizar, que es justo lo que no sabemos.
+
+---
+
 ### Por qué esto reorienta el proyecto
 
 Toda la literatura de referencia sitúa la **precipitación como predictor dominante**:

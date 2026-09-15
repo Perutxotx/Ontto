@@ -95,6 +95,13 @@ pasó con TWI, textura y pendiente, y respalda no bajar el modelo de suelo por d
 rodal. No afecta al corte ácido/básico, que es un contraste de otra escala: allí el pH va de
 4 a 8, aquí todo el gradiente estaba entre 3,4 y 5,95.
 
+**Y una fuente que va al revés.** El TFG de Escribano (2018), que hace esta misma capa para
+la Comarca de Pinares, valora la cubierta arbórea en sentido opuesto: 70–100 % de cubierta
+= potencialidad muy alta, 0–50 % = media. Es pinar mediterráneo —donde el dosel protege de
+la evaporación— y su valoración es criterio experto, no medida, mientras la nuestra sale de
+60 parcelas navarras de hayedo. No lo da por malo, pero refuerza que el umbral de
+luminosidad necesita el análisis de sensibilidad que sigue pendiente.
+
 **Robledal sin desglosar.** Navarra da un único valor (4,40) para el robledal atlántico, sin
 separar por sustrato ni luminosidad. Se aplica plano. Modular con los ratios del hayedo
 habría extrapolado hasta ~8-12 kg/ha, muy por encima de lo observado.
