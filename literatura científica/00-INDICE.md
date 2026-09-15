@@ -1,6 +1,6 @@
 # Índice de literatura — Ontto
 
-13 documentos. Nomenclatura: `AAAA_PrimerAutor_Tema.pdf`, ordenados por año.
+15 documentos. Nomenclatura: `AAAA_PrimerAutor_Tema.pdf`, ordenados por año.
 La síntesis de factores extraída de todo esto está en
 [docs/01-factores-fructificacion.md](../docs/01-factores-fructificacion.md).
 
@@ -114,6 +114,24 @@ Bonet, Fischer, Colinas (2004). For. Ecol. Manage. 203:157–175.
 edad influye en 21 taxones y la orientación en 7. Correlación **negativa** entre edad de la
 masa y producción de comestibles.
 
+### ★★ `2024_Centenaro_Cortas-a-hecho-y-comunidad-fungica-del-suelo.pdf`
+Centenaro, de-Miguel, Bonet, Martínez-Peña, Escribano, Ponce, Dashevskaya, Alday (2024).
+Sci. Total Environ. 909:168628. **Acceso abierto (CC BY).**
+
+Tres cortas a hecho de 0,5 ha en Pinar Grande (Soria), muestreadas **8 años después** en un
+gradiente corta → borde → bosque: 181 muestras de suelo, ITS2, 5.061 ASV.
+
+- **La biomasa fúngica cae a un tercio** dentro de la corta (1,7 frente a 4,2–5,1 mg/g) y
+  **sigue caída ocho años después**. El borde no se distingue del bosque interior.
+- La **composición** apenas cambia (<3 % de la varianza explicada por la zona); un tercio
+  menos de especies ectomicorrícicas en el núcleo de la corta.
+- **SOM, N, P y pH no difieren entre zonas y no explican nada** de la composición. La
+  variabilidad *dentro* de cada zona supera a la variabilidad *entre* zonas.
+
+Para Ontto importa por el lado del **potencial**, no del disparo: pone un suelo al
+"cuanto más abierto, mejor" del umbral de luminosidad, y respalda no bajar el modelo de
+suelo a escala fina. Ver [docs/04-capa-potencial.md](../docs/04-capa-potencial.md).
+
 ### ★ `2019_MumcuKucuker_Pendiente-orientacion-altitud-Boletus-edulis.pdf`
 Mumcu Kucuker (2019). Artvin Coruh Univ. J. For. Fac. 20(1):10–17. **Acceso abierto.**
 
@@ -124,6 +142,15 @@ modesto, pero es de los pocos que aísla la topografía.
 ---
 
 ## Tu zona exacta — Gipuzkoa y Norte de Navarra
+
+### ★★★ `2011_GestionAmbientalNavarra_Micologia-forestal-en-Navarra-Micosylva.pdf`
+Gestión Ambiental de Navarra / proyecto Micosylva (2011).
+*Micología forestal en Navarra.*
+
+**De aquí salen los coeficientes que usa Ontto.** 60 parcelas de hayedo muestreadas
+2005–2010, cruzadas por sustrato (ácido/básico) y luminosidad, con la producción media de
+MIC1 en kg/ha·año para cada combinación. Es la única fuente con producción medida en
+bosque y especie equivalentes a los de Gipuzkoa.
 
 ### ★★★ `2018_GobNavarra_Diagnostico-hongos-ANEXOS-parcelas-y-productividad.pdf`
 Gobierno de Navarra, Dirección General de Medio Ambiente y Agua (2018).
@@ -157,6 +184,11 @@ de aprovechamiento.
   fuente del **retardo de hasta un mes entre lluvia y humedad del suelo**. Merece pedirlo a
   los autores o vía biblioteca.
 - **Ágreda et al. (2013)**, Mycorrhiza — dinámica estacional del micelio extrarradical.
+- **Ágreda, Águeda, Olano, Vicente-Serrano, Fernández-Toirán (2015)**, Glob. Chang. Biol.
+  21(9), DOI 10.1111/gcb.12960 — *Increased evapotranspiration demand… might cause a decline
+  in fungal yields*. Misma serie de Pinar Grande. Es la referencia que falta sobre
+  **demanda evapotranspirativa** como limitante, justo el punto donde Ontto dice que el agua
+  no limita en Gipuzkoa. **La más prioritaria de esta lista.**
 - **Nada sobre *Pinus radiata***, que es la masa dominante de Gipuzkoa.
 - **Nada sobre *Calocybe gambosa*** (perretxiko), especie de primavera, de pastizal, y
   probablemente la más buscada de Gipuzkoa.

@@ -203,6 +203,15 @@ decisión abierta A1.
 3. **Serie hasta 2015.** Para operar en tiempo real hace falta el puente con AEMET y
    Euskalmet.
 4. **Sin validar.** Es coherente con la literatura; no sabemos si acierta.
+5. **La demanda evapotranspirativa entra sólo por la puerta de atrás.** El balance hídrico
+   usa ET0 de Hargreaves, pero el modelo concluye que el agua no limita en Gipuzkoa y la
+   única penalización por aire seco es la regla de exclusión (T5 > 17,5 °C y lluvia < 1 mm),
+   que es un sustituto tosco del déficit de presión de vapor. Ágreda et al. 2015
+   (Glob. Chang. Biol. 21(9), DOI 10.1111/gcb.12960), sobre la serie de nueve años de Pinar
+   Grande, sostiene justo lo contrario: que **la demanda evapotranspirativa creciente** —no
+   la lluvia— es lo que hace caer los rendimientos. Es el trabajo que más puede mover este
+   modelo y no lo tenemos. Anotado en
+   [literatura científica/00-INDICE.md](../literatura%20cient%C3%ADfica/00-INDICE.md).
 
 ---
 

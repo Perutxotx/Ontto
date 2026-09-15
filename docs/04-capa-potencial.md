@@ -67,6 +67,34 @@ mediante cobertura de vegetación heliófila del sotobosque; nosotros usamos cab
 arbórea. Son variables emparentadas pero no idénticas, y el umbral multiplica por 2 la
 producción del hayedo acidófilo (5,16 vs 2,62). Merece un análisis de sensibilidad.
 
+**El umbral no tiene suelo, y da igual.** Centenaro et al. 2024 (STOTEN 909:168628) mide
+tres cortas a hecho en pinar de Soria ocho años después: la biomasa fúngica del suelo cae a
+un tercio dentro de la corta (1,7 frente a 4,2–5,1 mg/g) y no se ha recuperado. Es decir, el
+"más abierto, más produce" no es monótono — pasado cierto punto, quitar el dosel quita el
+micelio. Nuestro umbral es binario y no tiene suelo: un rodal con FCCARB del 5 % cobraría el
+coeficiente alto igual que uno del 55 %.
+
+Comprobado sobre el mapa publicado (4.410 rodales, 40.773 ha):
+
+| FCCARB | rodales | ha | % del total kg |
+|---|---|---|---|
+| 0–10 % | 14 | 52 | 0,2 % |
+| 10–20 % | 0 | 0 | 0 % |
+| 20–40 % | 300 | 1.851 | 5,8 % |
+| 40–60 % | 219 | 1.730 | 4,8 % |
+| 60–100 % | 3.877 | 37.140 | 89,3 % |
+
+No hay ningún rodal con cabida 0 y solo 52 ha por debajo del 10 %. **El mapa no contiene
+cortas a hecho**, así que el sesgo existe pero es inmaterial. Si algún año el Mapa Forestal
+trae masas recién cortadas, habría que poner un suelo al umbral (p. ej. FCCARB ≥ 20 %).
+
+**El suelo no discrimina a escala fina.** El mismo trabajo mide materia orgánica, N, P y pH
+en el gradiente: no difieren entre zonas y **no explican nada** de la composición fúngica —
+la variabilidad dentro de cada zona supera a la de entre zonas. Coincide con lo que nos
+pasó con TWI, textura y pendiente, y respalda no bajar el modelo de suelo por debajo del
+rodal. No afecta al corte ácido/básico, que es un contraste de otra escala: allí el pH va de
+4 a 8, aquí todo el gradiente estaba entre 3,4 y 5,95.
+
 **Robledal sin desglosar.** Navarra da un único valor (4,40) para el robledal atlántico, sin
 separar por sustrato ni luminosidad. Se aplica plano. Modular con los ratios del hayedo
 habría extrapolado hasta ~8-12 kg/ha, muy por encima de lo observado.
@@ -114,7 +142,8 @@ está sobre sustrato básico y Navarra no la midió.
 - **Balance hídrico** → puerta de entrada a la capa DISPARO. Ya tenemos ET0 y precipitación
   del Atlas Climático, y los mapas de textura del suelo (arcilla, arena, limo) localizados
   en geoEuskadi, que resuelven el factor 20.
-- **Análisis de sensibilidad al umbral de luminosidad.**
+- **Análisis de sensibilidad al umbral de luminosidad.** Sigue pendiente; lo que sí está
+  comprobado es que el umbral no se rompe por abajo (ver arriba).
 - **Resolver el sustrato "incierto"** con el mapa litológico.
 - **Factores 10, 11, 14** (área basimétrica, altura dominante, índice de sitio) vía LiDAR:
   mejorarían la capa, no la bloquean.
