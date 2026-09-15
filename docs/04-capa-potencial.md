@@ -102,6 +102,23 @@ la evaporación— y su valoración es criterio experto, no medida, mientras la 
 60 parcelas navarras de hayedo. No lo da por malo, pero refuerza que el umbral de
 luminosidad necesita el análisis de sensibilidad que sigue pendiente.
 
+**Las cuatro fuentes no se contradicen: es una joroba.** Salerni et al. 2023 mide las tres
+intensidades de clara a la vez y encuentra que la **clara media (20 % del área basimétrica)
+produce más que la clara fuerte (40 %) y más que no clarear**. Egli y Ayer: 35 % de
+extracción aumenta la producción, 40–75 % la inhibe. Con eso encajan todas:
+
+| Fuente | Dice | Punto de la curva |
+|---|---|---|
+| Escribano 2018 | más dosel, mejor | la rama de la izquierda: cerrado → abrir algo |
+| Navarra / Ontto | más abierto, mejor (×2) | la misma rama, subiendo |
+| Salerni 2023 | el óptimo está en 20–35 % de extracción | la cima |
+| Centenaro 2024 | rasar hunde la biomasa a un tercio | la caída |
+
+Ontto está usando **media curva**: premia abrir sin penalizar nunca por exceso. En Gipuzkoa
+eso apenas cuesta —solo 52 ha por debajo del 10 % de cabida— pero la forma del modelo es
+incorrecta, no solo imprecisa. Lo que habría que probar es un **intervalo** en vez de un
+umbral de un lado.
+
 **Robledal sin desglosar.** Navarra da un único valor (4,40) para el robledal atlántico, sin
 separar por sustrato ni luminosidad. Se aplica plano. Modular con los ratios del hayedo
 habría extrapolado hasta ~8-12 kg/ha, muy por encima de lo observado.

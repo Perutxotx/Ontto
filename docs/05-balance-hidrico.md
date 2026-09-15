@@ -63,6 +63,25 @@ y su único parámetro —el umbral del 40 % de AWC— **se eligió, no se ajust
 comprobado nunca si la penalización tiene la forma correcta, porque hasta ahora no hacía
 falta. Es la debilidad más urgente del modelo, por delante de las tres ya conocidas.
 
+**Matiz importante (2026-09-15): `f_W` no es lo que está poniendo el índice a cero hoy.**
+Descompuestos los cinco factores a 600 m en los últimos diez días, la regla de exclusión
+(T5 > 17,5 °C y lluvia5 < 1 mm) está disparando **todos los días**, y `f_T` vale entre 0,001
+y 0,057 — hace demasiado calor, muy lejos del óptimo. Aunque `f_W` valiera 1, el índice
+seguiría siendo ~0,0002. **El cero de este septiembre es térmico, no hídrico.**
+
+Lo que sí hace `f_W` es mover la media de agosto–septiembre, y bastante:
+
+| `W_MIN` | `f_W` a 6-sep | índice medio ago-sep (600 m) | vs actual |
+|---|---|---|---|
+| 0,00 (sin término) | 1,00 | 0,0011 | +44 % |
+| 0,25 | 0,72 | 0,0011 | +41 % |
+| **0,40 (actual)** | **0,45** | **0,0008** | — |
+| 0,55 | 0,33 | 0,0006 | −27 % |
+| 0,70 | 0,26 | 0,0004 | −43 % |
+
+Un rango de ±44 % que depende de un número elegido a ojo. Sigue siendo el parámetro menos
+defendible del modelo, pero no es el que manda en la pantalla ahora mismo.
+
 Aquí es donde entra **Ágreda et al. 2015** (Glob. Chang. Biol. 21(9), DOI 10.1111/gcb.12960):
 sostiene que lo limitante es la **demanda evapotranspirativa**, no la lluvia. Comprobada la
 tendencia en nuestra propia serie 1970–2015, la ET0 **no sube** de forma detectable

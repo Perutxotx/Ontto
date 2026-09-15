@@ -198,11 +198,42 @@ decisión abierta A1.
 1. **Extrapolación en altura.** Las estaciones atlánticas llegan a 402 m; las cotas de 600,
    800 y 1.000 m son extrapolación pura del gradiente. Cuarta vez que este problema
    condiciona un resultado.
-2. ~~Sin retardo lluvia→fructificación.~~ **Resuelto en la v2**, aunque el retardo concreto
-   sigue sin ajustar con datos.
+2. ~~Sin retardo lluvia→fructificación.~~ **Resuelto en la v2.** ~~El retardo concreto sigue
+   sin ajustar con datos.~~ **Respaldado desde fuera (2026-09-15):** Salerni et al. 2023
+   encuentra el efecto de la lluvia intensa «sobre todo a partir del décimo día», con el pico
+   en el **día 12**, y cita a Salerni et al. 2002, donde el máximo de fructificación cae
+   **justo 10 días** después de la lluvia. Nuestro `LAG = 10` coincide.
+
+   Además **da igual el detalle**. Probadas cinco configuraciones de la ventana sobre la
+   serie en vivo (600 m, media agosto–septiembre 2026):
+
+   | ventana | días cubiertos | centro | índice medio |
+   |---|---|---|---|
+   | `VENT=15 LAG=10` (actual) | 10–24 | 17,0 | 0,0008 |
+   | `VENT=10 LAG=7` | 7–16 | 11,5 | 0,0007 |
+   | `VENT=10 LAG=10` | 10–19 | 14,5 | 0,0007 |
+   | `VENT=7 LAG=9` | 9–15 | 12,0 | 0,0007 |
+   | `VENT=20 LAG=5` | 5–24 | 14,5 | 0,0008 |
+
+   El resultado es insensible a dónde se ponga la ventana. **Esta deja de ser una debilidad.**
 3. **Serie hasta 2015.** Para operar en tiempo real hace falta el puente con AEMET y
    Euskalmet.
 4. **Sin validar.** Es coherente con la literatura; no sabemos si acierta.
+6. **Sin memoria estacional.** García-Bustamante et al. 2021 encuentra que la lluvia del
+   **verano previo** condiciona la producción de todo el otoño, con retardos de *meses*.
+   Ontto solo mira 15 días. El balance hídrico arrastra algo de esa memoria por el nivel del
+   cubo, pero no hay ningún término explícito de humedad antecedente estacional.
+
+7. **Sin factor de edad del rodal.** El mismo trabajo lo llama pivotal: máximo en la clase
+   de 51–70 años, y los pies viejos exigen más humedad que los jóvenes. Es el factor 14, sin
+   obtener. Sería abordable con LiDAR.
+
+8. **`f_W` es una rampa y probablemente debería ser una joroba.** García-Bustamante mide
+   producción entre el 10 y el 70 % de humedad volumétrica con el **máximo entre el 20 y el
+   45 %** — demasiada humedad tampoco favorece. Nuestra `f_W` nunca penaliza por arriba.
+   Ojo: humedad volumétrica y «% de la capacidad de agua disponible» no son la misma escala,
+   así que el número no se traslada directamente; la **forma** sí es una señal.
+
 5. **La demanda evapotranspirativa entra sólo por la puerta de atrás.** El balance hídrico
    usa ET0 de Hargreaves, pero el modelo concluye que el agua no limita en Gipuzkoa y la
    única penalización por aire seco es la regla de exclusión (T5 > 17,5 °C y lluvia < 1 mm),

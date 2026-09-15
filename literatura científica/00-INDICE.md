@@ -1,6 +1,6 @@
 # Índice de literatura — Ontto
 
-16 documentos. Nomenclatura: `AAAA_PrimerAutor_Tema.pdf`, ordenados por año.
+18 documentos. Nomenclatura: `AAAA_PrimerAutor_Tema.pdf`, ordenados por año.
 La síntesis de factores extraída de todo esto está en
 [docs/01-factores-fructificacion.md](../docs/01-factores-fructificacion.md).
 
@@ -44,6 +44,50 @@ suelo** en vez de la del aire — en concreto la mínima de agosto.
 ---
 
 ## Fenología y disparadores temporales (el "cuándo") — *lo que Ontto necesita*
+
+### ★★★ `2021_GarciaBustamante_Clima-local-y-regional-y-produccion-en-Soria.pdf`
+García-Bustamante, González-Rouco, García-Lozano, Martínez-Peña, Navarro (2021).
+Int. J. Climatol. 41, DOI 10.1002/joc.7144.
+
+**20 años de producción medida (1995–2014) contra clima, con humedad y temperatura del
+suelo instrumentadas.** 18 parcelas en Pinar Grande, estratificadas por edad. Es la serie
+larga con sensores de suelo que nos faltaba.
+
+- **Humedad del suelo:** la producción ocurre entre 10 y 70 % volumétrico; **el máximo está
+  entre 20 y 45 %**, no en lo más húmedo. *«Demasiada humedad o temperaturas demasiado
+  frías/cálidas no favorecen.»* → nuestra `f_W` es una rampa monótona; la respuesta real
+  parece una **joroba**.
+- **Temperatura del suelo (20 cm):** producción entre 8 y 14 °C, **máximo en torno a 12 °C**,
+  y el arranque de temporada en 10–13 °C. Nuestro óptimo de 13,2 °C es de temperatura del
+  *aire*, así que no son la misma variable, pero el orden de magnitud coincide.
+- **Lo que termina la temporada es la temperatura del suelo, no la humedad.**
+- **La lluvia del verano previo importa**, con retardos de meses, no solo la del propio
+  otoño. Ontto no tiene ningún término de humedad antecedente estacional.
+- **La edad del rodal es pivotal:** máximo en la clase 51–70 años; los pies viejos exigen
+  más humedad que los jóvenes. No tenemos factor de edad (factor 14, sin obtener).
+- Impacto **limitado de altitud y pendiente** de la parcela — otra vez el mismo patrón.
+
+### ★★ `2023_Salerni_Eventos-extremos-claras-y-produccion-de-Boletus.pdf`
+Salerni, Paoli, Perini (2023). Italian J. Mycology 52:76–88. **Acceso abierto.**
+DOI 10.6092/issn.2531-7342/16464
+
+36 parcelas de *Abies alba* en Monte Amiata (Toscana), conteo **diario** 2000–2002, cruzando
+tres intensidades de clara con eventos climáticos extremos y mirando **cada uno de los 21
+días siguientes** al evento.
+
+- **Confirma nuestro retardo.** Lluvia intensa (≥ 20 mm) → efecto positivo sobre la
+  fructificación **«sobre todo a partir del décimo día»**, con el pico en el **día 12**. Y
+  cita a Salerni et al. 2002, donde el máximo de especies fructificó **justo 10 días
+  después** de la lluvia. Nuestro `LAG = 10` deja de ser una elección a ojo.
+- **Da la forma de la respuesta al dosel, que es lo que faltaba.** Clara media (20 % del
+  área basimétrica) **mejor que clara fuerte (40 %) y mejor que no clarear**. Egli y Ayer:
+  35 % de extracción aumenta la producción, 40–75 % la inhibe. Es una **joroba**, y explica
+  por qué Navarra (abrir es bueno), Escribano (cerrar es bueno) y Centenaro (rasar es malo)
+  no se contradicen: están en puntos distintos de la misma curva.
+- Picos de temperatura máxima (~8 °C sobre la media): correlación **negativa** con la
+  producción en parcelas sin clarear y con clara media; positiva solo en clara fuerte y a
+  partir del día 20.
+- La retirada intensiva de hojarasca **perjudica** la fructificación.
 
 ### ★★★ `2025_Preprint_Disparadores-meteorologicos-diarios-Boletus-en-hayedo.pdf`
 Preprint bioRxiv (dic. 2025). *Predicting porcini: a decade of sporocarp monitoring reveals
