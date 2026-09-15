@@ -23,7 +23,7 @@
   --line:#d7dfd8; --line-2:#c2cdc3;
   --map-bg:#e5ebe4; --map-void:#dce3db; --off:#b3bdb4;
   --a1:#f0d9a8; --a2:#e0aa55; --a3:#c97a22; --a4:#a2500f; --a5:#6f2f08;
-  --accent:#c97a22; --sel:#111a15; --ok:#2e7a6b;
+  --accent:#c97a22; --sel:#111a15; --ok:#2e7a6b; --muni:#93a399;
   --shadow:0 1px 2px rgba(20,40,30,.06), 0 8px 24px -12px rgba(20,40,30,.18);
   --r:7px;
 }
@@ -32,7 +32,7 @@
   --ink:#e7ede8; --ink-2:#a3b1a8; --ink-3:#74837a;
   --line:#26332c; --line-2:#33423a; --map-bg:#111a16; --map-void:#080e0b; --off:#2b352e;
   --a1:#4a3d24; --a2:#8a6423; --a3:#c07f2c; --a4:#e2953c; --a5:#f7b45f;
-  --accent:#d98545; --sel:#f3f7f4; --ok:#3f9b89;
+  --accent:#d98545; --sel:#f3f7f4; --ok:#3f9b89; --muni:#5d6f65;
   --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.6);
 }}
 :root[data-theme="dark"]{
@@ -40,7 +40,7 @@
   --ink:#e7ede8; --ink-2:#a3b1a8; --ink-3:#74837a;
   --line:#26332c; --line-2:#33423a; --map-bg:#111a16; --map-void:#080e0b; --off:#2b352e;
   --a1:#4a3d24; --a2:#8a6423; --a3:#c07f2c; --a4:#e2953c; --a5:#f7b45f;
-  --accent:#d98545; --sel:#f3f7f4; --ok:#3f9b89;
+  --accent:#d98545; --sel:#f3f7f4; --ok:#3f9b89; --muni:#5d6f65;
   --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.6);
 }
 *{box-sizing:border-box}
@@ -56,7 +56,21 @@ h1{font-family:"Fraunces",Georgia,serif; font-size:23px; font-weight:600; margin
    letter-spacing:-.015em}
 .tag{font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase;
   color:var(--ink-3); border:1px solid var(--line-2); border-radius:99px; padding:2px 9px}
-.srcline{margin-left:auto; color:var(--ink-3); font-size:11.5px; text-align:right; line-height:1.45}
+/* El estado del dia, en la cabecera: es lo primero que se mira. */
+.hstat{margin:0 0 0 auto; display:flex; align-items:baseline; gap:8px; flex-wrap:wrap;
+  justify-content:flex-end; text-align:right; max-width:min(100%,720px)}
+.hnum{font-family:"IBM Plex Mono",monospace; font-size:30px; font-weight:600; line-height:1;
+  color:var(--accent); letter-spacing:-.02em}
+.hmax{font-size:12px; color:var(--ink-3); margin-left:-5px}
+.hword{font-family:"Fraunces",Georgia,serif; font-size:17px; font-weight:600;
+  color:var(--ink); padding-left:6px; border-left:1px solid var(--line-2)}
+.hnote{color:var(--ink-2); font-size:12.5px; line-height:1.45; flex:1 1 260px; min-width:0}
+.hnote b{color:var(--ink)}
+.haviso{margin:0; width:100%; font-size:12px; color:#8a5a12; background:#fff4e0;
+  border:1px solid #f0d9ae; border-radius:8px; padding:6px 10px}
+@media (prefers-color-scheme:dark){
+  .haviso{color:#f0c987; background:#332712; border-color:#5a4520}
+}
 
 aside{background:var(--surface); border-right:1px solid var(--line); overflow-y:auto;
       overscroll-behavior:contain}
@@ -182,7 +196,8 @@ canvas#ch{display:block; width:100%; height:118px}
   .app{grid-template-columns:1fr; grid-template-rows:auto 52vh auto; height:auto}
   aside{border-right:0; border-top:1px solid var(--line); order:3; overflow:visible}
   main{order:2}
-  .srcline{margin-left:0; text-align:left; width:100%}
+  .hstat{margin-left:0; text-align:left; justify-content:flex-start; max-width:100%}
+  .hnote{flex-basis:100%}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
@@ -193,7 +208,12 @@ canvas#ch{display:block; width:100%; height:118px}
   <header>
     <h1>Ontto</h1>
     <span class="tag">prototipo</span>
-    <p class="srcline">POTENCIAL × DISPARO · Gipuzkoa<br><span id="upd">Datos de AEMET</span></p>
+    <p class="hstat">
+      <span class="hnum" id="vnum">—</span><span class="hmax">/100</span>
+      <span class="hword" id="vword"></span>
+      <span class="hnote" id="vnote"></span>
+    </p>
+    <p class="haviso" id="haviso" hidden></p>
   </header>
 
   <aside>
@@ -208,14 +228,13 @@ canvas#ch{display:block; width:100%; height:118px}
       </div>
       <div class="spark" id="spark"></div>
       <div class="sparklab"><span id="sparkA"></span><span id="sparkB"></span></div>
+      <p class="vnote" id="vviene" style="margin-top:9px">&nbsp;</p>
     </div>
 
     <div class="blk">
-      <p class="eyebrow">Condiciones para onddo</p>
+      <p class="eyebrow">Dónde estás</p>
       <p class="miloc" id="miloc" hidden></p>
-      <p class="verdict"><span class="vnum" id="vnum">—</span><span class="vmax">/ 100</span></p>
-      <p class="vword" id="vword">&nbsp;</p>
-      <p class="vnote" id="vnote">&nbsp;</p>
+      <p class="empty" id="milocvacio">Pulsa el botón de ubicación sobre el mapa.</p>
     </div>
 
     <div class="blk">
@@ -313,11 +332,29 @@ function disAt(vals, alt){
   }
   return vals[0];
 }
-// HOY = ultimo dia observado; detras vienen los previstos por AEMET
-const HOY=(()=>{
+// HOY = el dia de hoy de verdad, segun el reloj del aparato.
+//
+// Antes era "el ultimo dia observado", y eso lo dejaba anclado en el pasado:
+// AEMET valida la climatologia con 1 a 4 dias de retraso, asi que el dia
+// marcado como "Hoy" podia ser el de hace cuatro dias y la ventana no se
+// movia. Los dias entre el ultimo observado y hoy si existen en la serie,
+// pero vienen de la prediccion; se marcan como tales, no se ocultan.
+const ULT_OBS=(()=>{
   if(DIS.live.o){ for(let k=DIS.live.o.length-1;k>=0;k--) if(DIS.live.o[k]===0) return k; }
   return DIS.live.d.length-1;
 })();
+function isoLocal(d){
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')
+        +'-'+String(d.getDate()).padStart(2,'0');
+}
+const HOY=(()=>{
+  const k=DIS.live.d.indexOf(isoLocal(new Date()));
+  if(k>=0) return k;
+  return ULT_OBS;          // datos viejos, o reloj desviado: lo ultimo firme
+})();
+// Cuantos dias le faltan a los datos para llegar a hoy. 0 = al dia.
+const ATRASO=Math.round((Date.parse(isoLocal(new Date())+'T12:00:00')
+                        -Date.parse(DIS.live.d[DIS.live.d.length-1]+'T12:00:00'))/864e5);
 let di=HOY;
 let vals=DIS.live.v[di];
 
@@ -364,13 +401,18 @@ function render(){
     if(px1-px0<1.1&&py1-py0<1.1) continue;
     ctx.fillStyle=colorFor(val/NORM); path(f[0]); ctx.fill();
   }
-  ctx.strokeStyle=css('--ink-3'); ctx.globalAlpha=.35; ctx.lineWidth=scale>fit*3?.8:.45;
+  // Limites municipales: ayudan a situarse, asi que tienen que verse. Pero son
+  // referencia, no dato, asi que no deben competir con las manchas de rodal.
+  // Trazo discontinuo y difuminado: se leen sin tirar del ojo.
+  ctx.strokeStyle=css('--muni'); ctx.globalAlpha=.85;
+  ctx.lineWidth=scale>fit*3?1.1:.8;
+  ctx.setLineDash(scale>fit*2?[5,4]:[3,3]);
   for(const m of D.muni){ path(m.r); ctx.stroke(); }
-  ctx.globalAlpha=1;
+  ctx.setLineDash([]); ctx.globalAlpha=1;
   ctx.strokeStyle=css('--ink-3'); ctx.lineWidth=1.1; path(D.gip); ctx.stroke();
   const h=(sel>=0)?sel:hov;
   if(h>=0){ ctx.strokeStyle=css('--sel'); ctx.lineWidth=(h===sel)?2:1.4; path(F[h][0]); ctx.stroke(); }
-  if(scale>fit*2.1){
+  if(scale>fit*1.45){
     ctx.font='500 11px "IBM Plex Sans", sans-serif';
     ctx.textAlign='center'; ctx.textBaseline='middle';
     const placed=[], ms=D.muni.slice().sort((a,b)=>b.a-a.a);
@@ -543,8 +585,9 @@ function update(){
     const pct=Math.round(100*(mx-cl)/cl);
     cmp=' Frente a la media de esta fecha, <b>'+(pct>=0?'+':'')+pct+'&nbsp;%</b>.';
   }
-  const viene = (di===HOY) ? loQueViene() : '';
-  document.getElementById('vnote').innerHTML = nota + cmp + (viene ? ' ' + viene : '');
+  document.getElementById('vnote').innerHTML = nota + cmp;
+  const vv=document.getElementById('vviene');
+  if(vv) vv.innerHTML = (di===HOY) ? (loQueViene() || '&nbsp;') : '&nbsp;';
   document.getElementById('off').hidden = mx>=0.02 ? true : false;
   // bandas
   document.getElementById('bands').innerHTML=ZS.map((z,i)=>
@@ -574,10 +617,19 @@ const DIAS=['domingo','lunes','martes','mi\u00e9rcoles','jueves','viernes','s\u0
 const MESC=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
 const DESDE=Math.max(0,HOY-4), HASTA=DIS.live.d.length-1;
 
+// Distancia en dias entre un dia de la serie y hoy de verdad. Se compara con
+// la fecha, no con la posicion en el array: si los datos se quedan viejos, el
+// dia que quede seleccionado no debe llamarse "Hoy".
+function difDias(k){
+  return Math.round((Date.parse(DIS.live.d[k]+'T12:00:00')
+                    -Date.parse(isoLocal(new Date())+'T12:00:00'))/864e5);
+}
+function esHoy(k){ return difDias(k)===0; }
 function nomDia(k){
-  if(k===HOY) return 'Hoy';
-  if(k===HOY+1) return 'Ma\u00f1ana';
-  if(k===HOY-1) return 'Ayer';
+  const dd=difDias(k);
+  if(dd===0) return 'Hoy';
+  if(dd===1) return 'Ma\u00f1ana';
+  if(dd===-1) return 'Ayer';
   const d=new Date(DIS.live.d[k]+'T12:00:00');
   return DIAS[d.getDay()].charAt(0).toUpperCase()+DIAS[d.getDay()].slice(1);
 }
@@ -599,7 +651,7 @@ function pintaSpark(){
       +' data-prev="'+(prev?1:0)+'"'
       +' title="'+nomDia(k)+' '+fechaCorta(k)+' \u00b7 '+Math.round(v*100)+'">'
       +'<i style="height:'+h+'%"></i>'
-      +(k===HOY?'<span class="hoymark"></span>':'')+'</button>';
+      +(esHoy(k)?'<span class="hoymark"></span>':'')+'</button>';
   }
   cont.innerHTML=html;
   cont.querySelectorAll('button').forEach(b=>{ b.onclick=()=>{ di=+b.dataset.k; update(); }; });
@@ -672,10 +724,10 @@ function pintaMiPos(){
 }
 
 function textoUbicacion(){
-  const c = document.getElementById('miloc');
+  const c = document.getElementById('miloc'), v = document.getElementById('milocvacio');
   if(!c) return;
-  if(!miPos){ c.hidden = true; return; }
-  c.hidden = false;
+  if(!miPos){ c.hidden = true; if(v) v.hidden = false; return; }
+  c.hidden = false; if(v) v.hidden = true;
   if(miRodal < 0){
     c.innerHTML = '<b>Estás fuera de un rodal con datos.</b> Puede ser plantación de '
       + 'conífera, pasto o zona urbana: ahí Ontto no dice nada.';
@@ -757,15 +809,47 @@ window.addEventListener('keydown',e=>{
 });
 window.addEventListener('resize',resize);
 matchMedia('(prefers-color-scheme:dark)').addEventListener('change',()=>{draw();drawChart();});
-const up=document.getElementById('upd');
-if(up && DIS.actualizado) up.textContent='Actualizado '+DIS.actualizado;
+// Si los datos no llegan a hoy, decirlo. Es la diferencia entre "hoy no hay
+// nada" y "no sé lo de hoy", y para quien va al monte no es lo mismo.
+(function(){
+  const a=document.getElementById('haviso');
+  if(!a) return;
+  if(ATRASO>0){
+    a.hidden=false;
+    a.innerHTML='Los datos llegan hasta el <b>'+fechaCorta(DIS.live.d.length-1)
+      +'</b>: faltan '+ATRASO+(ATRASO===1?' día':' días')
+      +'. Se muestra el último disponible.'
+      +(DIS.actualizado?' Actualizado '+DIS.actualizado+'.':'');
+  }
+})();
 resize(); reset(); update();
 })();
 </script>
 <script>
 if('serviceWorker' in navigator){
   window.addEventListener('load',function(){
-    navigator.serviceWorker.register('sw.js').catch(function(){});
+    navigator.serviceWorker.register('sw.js').then(function(reg){
+      // Buscar version nueva al abrir y al volver a primer plano. Sin esto,
+      // una app ya instalada puede quedarse meses con el codigo viejo.
+      reg.update().catch(function(){});
+      document.addEventListener('visibilitychange',function(){
+        if(!document.hidden) reg.update().catch(function(){});
+      });
+      reg.addEventListener('updatefound',function(){
+        var sw=reg.installing;
+        if(!sw) return;
+        sw.addEventListener('statechange',function(){
+          if(sw.state==='installed' && navigator.serviceWorker.controller) sw.postMessage('saltar');
+        });
+      });
+    }).catch(function(){});
+    // Cuando el worker nuevo toma el control, recargar una sola vez.
+    var recargado=false;
+    navigator.serviceWorker.addEventListener('controllerchange',function(){
+      if(recargado) return;
+      recargado=true;
+      location.reload();
+    });
   });
 }
 </script>
