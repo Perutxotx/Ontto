@@ -6,6 +6,13 @@ on:
   schedule:
     - cron: '40 5 * * *'
   workflow_dispatch:          # y a mano desde la pestaña Actions
+  push:                       # y al cambiar la app, para no esperar al cron
+    branches: [main]
+    paths:
+      - 'web/**'
+      - 'src/**'
+      - 'publico/**'
+      - '.github/workflows/actualiza.yml'
 
 permissions:
   contents: read
