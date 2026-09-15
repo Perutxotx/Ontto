@@ -1,6 +1,6 @@
 # Índice de literatura — Ontto
 
-18 documentos. Nomenclatura: `AAAA_PrimerAutor_Tema.pdf`, ordenados por año.
+21 documentos. Nomenclatura: `AAAA_PrimerAutor_Tema.pdf`, ordenados por año.
 La síntesis de factores extraída de todo esto está en
 [docs/01-factores-fructificacion.md](../docs/01-factores-fructificacion.md).
 
@@ -19,6 +19,19 @@ Martínez-Peña, de-Miguel, Pukkala, Bonet, Ortega-Martínez, Aldea, Martínez d
 *Lactarius* y *B. edulis* — la primera de la historia para *B. edulis*. Marco conceptual de
 tres bloques de factores (sitio / estructura de masa / meteorología) que usa todo el resto
 de la literatura. R² = 0,22–0,42.
+
+### ★ `2007_OriaDeRueda_Produccion-de-Boletus-en-jarales.pdf`
+Oria-de-Rueda, Martín-Pinto, Olaizola (2007). Economic Botany. Universidad de Valladolid.
+
+Producción medida en transectos de 2 × 50 m en jarales del noroeste peninsular:
+***Cistus ladanifer* 37,8 kg/ha·año**, ***Halimium lasianthum* 15,15 kg/ha·año**, con
+fructificación abundante ya en matas de **3 años** — mucho antes que en pinar o robledal.
+
+Son las cifras de producción más altas de toda la bibliografía que tenemos (nuestro mejor
+hayedo navarro da 5,16 kg/ha·año). **No son trasladables a Gipuzkoa:** comprobado el Mapa
+Forestal de la CAE, no hay ninguna especie de Cistáceas en el territorio. El hospedante no
+existe aquí. Queda como contexto de cuánto puede llegar a producir el hongo cuando el
+sistema le va bien.
 
 ### ★★ `2019_SanchezGonzalez_Modelos-de-rendimiento-ECM-norte-de-Espana.pdf`
 Sánchez-González et al. (2019). Forest Ecosystems 6:52. **Acceso abierto.**
@@ -44,6 +57,27 @@ suelo** en vez de la del aire — en concreto la mínima de agosto.
 ---
 
 ## Fenología y disparadores temporales (el "cuándo") — *lo que Ontto necesita*
+
+### ★★★ `2025_Andrew_Optimos-de-fructificacion-de-127-especies-europeas.pdf`
+Andrew (2025). Fungal Ecology 75:101416, Natural History Museum, Oslo.
+
+**El respaldo más fuerte que tiene el óptimo térmico de Ontto.** Ajusta curvas de óptimo
+(GAM, tipo Huisman-Olff-Fresco) a **127 taxones europeos** frecuentes, sobre temperatura
+media anual, precipitación anual total y **temperatura del día del registro**.
+
+- **Óptimo de temperatura del día del registro: 12,2 ± 2,0 °C** (media de los 127 taxones).
+  Ontto usa 13,2 °C — dentro de una desviación típica.
+- **Amplitud de nicho diario de los ectomicorrícicos terrestres: 3,4 °C**, la más estrecha
+  de todos los grupos (frente a 4,3 de los saprótrofos de madera y 6,0-6,2 de los de
+  podredumbre). Nuestra σ es 3,5.
+- La temperatura del día del registro es **la mejor de las tres variables** (R² = 0,72,
+  devianza explicada 0,39, frente a 0,12 de la temperatura media anual).
+- Óptimo de precipitación anual: 920,6 ± 96,0 mm; de temperatura media anual: 9,9 ± 3,3 °C.
+- Todas las especies son sensibles a los extremos diarios de temperatura.
+
+Hasta ahora nuestro 13,2 °C venía de **un solo preprint de hayedo alemán** y arrastraba la
+sospecha de confundir temperatura con fecha. Esto lo corrobora desde 127 especies y una
+metodología distinta.
 
 ### ★★★ `2021_GarciaBustamante_Clima-local-y-regional-y-produccion-en-Soria.pdf`
 García-Bustamante, González-Rouco, García-Lozano, Martínez-Peña, Navarro (2021).
@@ -157,6 +191,24 @@ Bonet, Fischer, Colinas (2004). For. Ecol. Manage. 203:157–175.
 36 parcelas, 7 clases de edad, 4 orientaciones, 3 años, 9.073 carpóforos de 164 taxones. La
 edad influye en 21 taxones y la orientación en 7. Correlación **negativa** entre edad de la
 masa y producción de comestibles.
+
+### ★ `2011_AlonsoPonce_Nicho-climatico-de-Boletus-en-jarales.pdf`
+Alonso Ponce, Agueda, Agreda, Modrego, Aldea, Fernández-Toirán, Martínez-Peña (2011).
+Fungal Ecology 4:224–232.
+
+Modelo de distribución (Maxent) del nicho realizado de *B. edulis* **en jarales de
+*Cistus ladanifer*** en la España peninsular, corregido por litología.
+
+- De 15 variables climáticas solo **cuatro** entran en el modelo: precipitación de verano,
+  precipitación de otoño, **temperatura media de otoño** e intensidad de sequía. Coincide
+  con lo que hace Ontto, y otra vez aparece **la lluvia de verano** como variable propia.
+- **Suelos fuertemente ácidos**, textura franca, pobres en materia orgánica. Respalda el
+  corte ácido/básico de la capa POTENCIAL.
+- Excluye las zonas calcáreas por criterio litológico — lo mismo que hacemos nosotros.
+
+⚠️ El nicho que describe es **mesotérmico, mediterráneo, 681 mm anuales y 2,6 meses de
+sequía**. Gipuzkoa es atlántica con 1.400–2.400 mm. El nicho **no se traslada**; lo que
+sirve es la selección de variables y el criterio edáfico.
 
 ### ★★ `2024_Centenaro_Cortas-a-hecho-y-comunidad-fungica-del-suelo.pdf`
 Centenaro, de-Miguel, Bonet, Martínez-Peña, Escribano, Ponce, Dashevskaya, Alday (2024).
