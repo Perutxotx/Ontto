@@ -100,7 +100,7 @@ saber si el modelo funciona.
 
 ## Decisiones abiertas
 
-### A1 — De dónde salen los datos de validación *(bloqueante, pero reducido)*
+### A1 — De dónde salen los datos de validación *(ya no bloqueante)*
 No tenemos verdad-terreno para Gipuzkoa. Sin ella no se puede validar nada.
 
 **Reducido el 2026-09-06.** Los coeficientes de producción medidos en Navarra
@@ -110,6 +110,16 @@ POTENCIAL sin pedir nada a nadie. Lo que sigue faltando es:
 - **Validar** que Ontto acierta
 
 Es decir, A1 ya no bloquea el mapa, solo el modelo temporal y la verificación.
+
+**Reducido otra vez el 2026-09-16.** La verificación del DISPARO ya no está pendiente:
+132 registros de fructificación con fecha exacta (GBIF: herbario ARAN de Aranzadi,
+iNaturalist y otros) muestran que **el modelo acierta de forma significativa en otoño**
+—percentil 61, z = +3,1— con ventana de 5 a 15 días. Ver
+[08-validacion.md](08-validacion.md).
+
+Lo que queda de A1 es **solo la capa POTENCIAL**: para saber si los kilos por hectárea son
+los correctos sigue haciendo falta producción medida. Y ampliar la muestra temporal, que
+con n = 65 es un indicio sólido, no una medida.
 
 ### A2 — ¿Solo estaciones meteorológicas o también teledetección?
 La literatura es contundente: solo estaciones → R² 0,2–0,4; añadiendo humedad de suelo y

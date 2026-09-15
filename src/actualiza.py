@@ -36,7 +36,7 @@ MUNI_PRED = ['20030', '20069', '20016']      # Eibar, Donostia, Beasain
 
 AWC = 74.0
 OPT, SIG = 13.2, 3.5
-T_EXCL, P_EXCL = 17.5, 1.0
+T_EXCL, P_EXCL, T_RAMPA = 17.5, 1.0, 2.0
 W_MIN = 0.40
 LAG, VENT, P0 = 10, 15, 40.0
 ZS = [0, 200, 400, 600, 800, 1000]
@@ -214,7 +214,13 @@ def disparo(s, zref):
         n5 = (s['N'] + b * (z - zref)).rolling(5, min_periods=2).mean()
         idx = np.exp(-((t5 - OPT) / SIG) ** 2) * pulso \
             * np.clip(w5 / (W_MIN * AWC), 0, 1) * np.clip((n5 + 2) / 4, 0, 1) * est
-        out[z] = idx.where(~((t5 > T_EXCL) & (p5 < P_EXCL)), 0.0)
+        # Supresion por calor seco. Era un acantilado en T_EXCL: dos dias que
+        # diferian en 0,1 C daban 0,30 y 0,00. Ahora es una rampa de 2 C, que
+        # dice lo mismo sin el salto. Ningun trabajo describe un umbral duro
+        # aqui; Salerni et al. 2023 mide correlaciones negativas graduadas con
+        # los picos de temperatura, no una cancelacion subita.
+        supr = np.clip((t5 - T_EXCL) / T_RAMPA, 0, 1).where(p5 < P_EXCL, 0.0)
+        out[z] = idx * (1 - supr)
     D = pd.DataFrame(out)
     D['origen'] = s['origen']
     return D, agua

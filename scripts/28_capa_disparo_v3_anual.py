@@ -22,7 +22,7 @@ tmed=((tx[AT]+tn[AT])/2).mean(axis=1); tmin=tn[AT].mean(axis=1)
 p=pr[AT].mean(axis=1); agua=S[AT].mean(axis=1); AWC=74.0
 L12=np.load('lapse12.npy')
 cota=lambda zz,s: s + L12[s.index.month.values-1]*(zz-ZREF)
-OPT,SIG=13.2,3.5; T_EXCL,P_EXCL=17.5,1.0; W_MIN=0.40; LAG,VENT,P0=10,15,40.0
+OPT,SIG=13.2,3.5; T_EXCL,P_EXCL,T_RAMPA=17.5,1.0,2.0; W_MIN=0.40; LAG,VENT,P0=10,15,40.0
 f_T=lambda t:np.exp(-((t-OPT)/SIG)**2)
 f_W=lambda w:np.clip(w/(W_MIN*AWC),0,1)
 f_H=lambda t:np.clip((t+2.0)/4.0,0,1)
@@ -36,7 +36,8 @@ for zz in ZS:
     t5=cota(zz,tmed).rolling(5,min_periods=3).mean()
     n5=cota(zz,tmin).rolling(5,min_periods=3).mean()
     idx=f_T(t5)*pulso*f_W(w5)*f_H(n5)*est
-    res[zz]=idx.where(~((t5>T_EXCL)&(p5<P_EXCL)),0.0)
+    supr=np.clip((t5-T_EXCL)/T_RAMPA,0,1).where(p5<P_EXCL,0.0)   # rampa, no acantilado
+    res[zz]=idx*(1-supr)
 D=pd.DataFrame(res); D.to_pickle('disparo_final.pkl')
 D.round(4).to_csv('C:/Users/Peru/Desktop/Ontto App/datos/disparo_diario_anual_1970_2015.csv')
 MES=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic']

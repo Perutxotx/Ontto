@@ -1,6 +1,7 @@
 # datos intermedios del analisis: se regeneran con los scripts de scripts/
 datos/*.csv
 datos/*.json
+datos/gbif/          # cache de GBIF: lo redescarga scripts/31
 !datos/README.md
 
 # literatura: PDFs publicados, indexados en literatura cientifica/00-INDICE.md

@@ -34,8 +34,8 @@ publico/                 lo que se publica
   datos/base.json        ~900 KB · el mapa · cacheado
   datos/disparo.json      ~20 KB · el índice · cada día
 docs/                    el proyecto: decisiones, datos, modelo
-scripts/                 los 28 pasos del análisis, en orden
-literatura científica/   14 trabajos, indexados en 00-INDICE.md
+scripts/                 los 31 pasos del análisis, en orden
+literatura científica/   18 trabajos, indexados en 00-INDICE.md
 ```
 
 ## Puesta en marcha
@@ -90,17 +90,25 @@ python -m http.server -d publico 8000 # y abrir localhost:8000
 **No dice que haya setas.** Dice que las condiciones se parecen a las que la literatura
 asocia con la fructificación, en montes que deberían producir.
 
-**No está validado.** No existen datos de producción medidos en Gipuzkoa con los que
-comprobar si acierta. Los coeficientes vienen de Navarra, de bosque y especie equivalentes,
-pero prestados.
+**Validado a medias.** El *cuándo* sí: contra 132 registros de fructificación con fecha
+exacta —herbario ARAN de Aranzadi, iNaturalist y otros, vía GBIF— el índice acierta de forma
+significativa en otoño (percentil 61 frente al 50 esperado por azar, z = +3,1). El *cuánto*
+no: no existe producción medida en kg en Gipuzkoa, y los coeficientes vienen prestados de
+Navarra, de bosque y especie equivalentes. Todo el detalle, con sus reservas, en
+[docs/08-validacion.md](docs/08-validacion.md).
 
 **Faltan 72.000 ha.** Las plantaciones de conífera —radiata sobre todo— no tienen
 coeficiente medido en ninguna publicación. Aparecen fuera del mapa, no en cero: sería
 afirmar algo que no sabemos.
 
-**Tres parámetros son elecciones informadas, no ajustes.** El retardo de la lluvia
-(10 días), el umbral de apertura del dosel (60 % de cabida cubierta) y la asimetría
-estacional. Con datos de producción locales se ajustarían en una tarde.
+**Dos parámetros son elecciones informadas, no ajustes.** El umbral de apertura del dosel
+(60 % de cabida cubierta) y el umbral hídrico (40 % de la capacidad del suelo). Con datos de
+producción locales se ajustarían en una tarde.
+
+El **retardo de la lluvia** (10 días) ya no está en esa lista: Salerni et al. 2023 sitúa el
+efecto «sobre todo a partir del décimo día» con el pico en el 12, y mover la ventana entre 5
+y 24 días no cambia el resultado. La **asimetría estacional** tampoco: reproduce el
+calendario real de hallazgos con r = +0,81.
 
 ## Licencia y fuentes
 

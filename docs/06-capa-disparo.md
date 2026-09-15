@@ -218,7 +218,10 @@ decisión abierta A1.
    El resultado es insensible a dónde se ponga la ventana. **Esta deja de ser una debilidad.**
 3. **Serie hasta 2015.** Para operar en tiempo real hace falta el puente con AEMET y
    Euskalmet.
-4. **Sin validar.** Es coherente con la literatura; no sabemos si acierta.
+4. ~~**Sin validar.**~~ **Validado el 2026-09-16** contra 132 registros de fructificación
+   con fecha exacta: percentil 61, z = +3,1 en otoño. Ver
+   [08-validacion.md](08-validacion.md). Con las reservas de allí: son presencias, no
+   cosechas, y n = 65.
 6. **Sin memoria estacional.** García-Bustamante et al. 2021 encuentra que la lluvia del
    **verano previo** condiciona la producción de todo el otoño, con retardos de *meses*.
    Ontto solo mira 15 días. El balance hídrico arrastra algo de esa memoria por el nivel del
